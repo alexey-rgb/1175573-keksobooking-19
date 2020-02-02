@@ -33,6 +33,14 @@ var getRandomElementArray = function (arr) {
   return arr[random(0, arr.length - 1)];
 };
 
+var positionX = function () {
+  return random(MIN_MAP_WIDTH, MAX_MAP_WIDTH);
+};
+
+var positionY = function () {
+  return random(POSITION_Y_MIN, POSITION_Y_MAX);
+};
+
 // создаем функцию для генерации 8 объектов
 
 var mockData = function () {
@@ -40,24 +48,23 @@ var mockData = function () {
   var objects = [];
   for (var i = 0; i < OBJECT_NUMBER; i++) {
     objects.push({
-        'avatar': 'img/avatars/user0' + (i + 1) + '.png',
-        'title': 'заголовок объявления',
-        'address': (location.x, location.y),
-        'price': random(MIN, MAX),
-        'type': getRandomElementArray(TYPES),
-        'rooms': random(MIN, MAX),
-        'guests': random(MIN, MAX),
-        'checkin': getRandomElementArray(CHECKS),
-        'checkout': getRandomElementArray(CHECKS),
-        'features': 'wifi, dishwasher, parking, washer, elevator, conditioner',
-        'description': 'строка с описанием',
-        'photos': getRandomElementArray(PHOTO_APARTMENTS),
-        'location': {
-          x: random(MIN_MAP_WIDTH, MAX_MAP_WIDTH),
-          y: random(POSITION_Y_MIN, POSITION_Y_MAX)
-        },
+      'avatar': 'img/avatars/user0' + (i + 1) + '.png',
+      'title': 'заголовок объявления',
+      'address': '{' + String(positionX()) + ',' + String(positionY()) + '}',
+      'price': random(MIN, MAX),
+      'type': getRandomElementArray(TYPES),
+      'rooms': random(MIN, MAX),
+      'guests': random(MIN, MAX),
+      'checkin': getRandomElementArray(CHECKS),
+      'checkout': getRandomElementArray(CHECKS),
+      'features': 'wifi, dishwasher, parking, washer, elevator, conditioner',
+      'description': 'строка с описанием',
+      'photos': getRandomElementArray(PHOTO_APARTMENTS),
+      'location': {
+        'x': positionX(),
+        'y': positionY(),
       }
-    )
+    });
   }
   return objects;
 };
