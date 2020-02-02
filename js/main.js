@@ -6,7 +6,7 @@ var OBJECT_NUMBER = 8;
 var MIN = 1;
 var MAX = 10;
 var TYPES = ['palace', 'flat', 'house', 'bungalo'];
-var CHECKS = ['12:00, 13:00, 14:00,'];
+var CHECKS = ['12:00', '13:00', '14:00'];
 var MAX_MAP_WIDTH = 3500;
 var MIN_MAP_WIDTH = 1;
 var POSITION_Y_MIN = 130;
@@ -39,22 +39,23 @@ var mockData = function () {
   var objects = [];
   for (var i = 0; i < OBJECT_NUMBER; i++) {
     objects.push({
-      'avatar': '../img/avatars/user' + i + 1 + '.png',
-      'title': 'заголовок объявления',
-      'address': 'location.x, location.y',
-      'price': random(),
-      'type': getRandomElementArray(TYPES),
-      'rooms': random(MIN, MAX),
-      'guests': random(MIN, MAX),
-      'checkin': getRandomElementArray(CHECKS),
-      'checkout': getRandomElementArray(CHECKS),
-      'features': 'wifi, dishwasher, parking, washer, elevator, conditioner',
-      'description': 'строка с описанием',
-      'location': {
-        x: random(MIN_MAP_WIDTH, MAX_MAP_WIDTH),
-        y: random(POSITION_Y_MIN, POSITION_Y_MAX),
-      },
-    }
+        /*'avatar': '../img/avatars/user' + i + 1 + '.png',*/
+        'avatar': 'img/avatars/user0' + (i + 1) + '.png',
+        'title': 'заголовок объявления',
+        'address': (location.x, location.y),
+        'price': random(MIN, MAX),
+        'type': getRandomElementArray(TYPES),
+        'rooms': random(MIN, MAX),
+        'guests': random(MIN, MAX),
+        'checkin': getRandomElementArray(CHECKS),
+        'checkout': getRandomElementArray(CHECKS),
+        'features': 'wifi, dishwasher, parking, washer, elevator, conditioner',
+        'description': 'строка с описанием',
+        'location': {
+          x: random(MIN_MAP_WIDTH, MAX_MAP_WIDTH),
+          y: random(POSITION_Y_MIN, POSITION_Y_MAX),
+        },
+      }
     );
   }
   return objects;
@@ -79,21 +80,46 @@ var getNewDescription = function () {
     cardElement.querySelector('.popup__text--time').textContent = item.checkin + item.checkout;
     cardElement.querySelector('.popup__features').textContent = item.features;
     cardElement.querySelector('.popup__description').textContent = item.description;
-    pinElement.querySelector('.pin__img').src = item.avatar;
-    pinElement.querySelector('.pin__img').alt = item.title;
-    pinElement.querySelector('.map-pin').style.left = item.location.x + (-PIN_SIZE * 0.5);
-    pinElement.querySelector('.map-pin').style.top = item.location.y + (-PIN_SIZE * 0.5);
+    //   pinElement.querySelector('/*.pin__*/img').src = item.avatar;
+    //   pinElement.querySelector('/*.pin__*/img').alt = item.title;
+    //   pinElement.style.left = item.location.x + (-40 * 0.5) + 'px';
+    //   pinElement.style.top = item.location.y + (-PIN_SIZE * 0.5) + 'px';
+    //   console.info(item);
   });
-  return cardElement && pinElement;
+  /*return cardElement && pinElement;*/
+  return cardElement;
 };
+
+var getNewPin = function (item) {
+  var pinElement = PIN_TEMPLATE.cloneNode(true);
+  pinElement.querySelector('/*.pin__*/img').src = item.avatar;
+  pinElement.querySelector('/*.pin__*/img').alt = item.title;
+  pinElement.style.left = (item.location.x + (-40 * 0.5)) + 'px';
+  pinElement.style.top = (item.location.y + (-PIN_SIZE * 0.5)) + 'px';
+  /*console.log(pinElement);*/
+
+  return pinElement;
+};
+
 
 // записываем полученную информацию во фрагмент
 
-var fragment = document.createDocumentFragment();
-mockData().forEach(function (item, i) {
-  fragment.appendChild(getNewDescription(item, i));
+var fragment1 = document.createDocumentFragment();
+mockData().forEach(function (item) {
+  fragment1.appendChild(getNewPin(item));
 });
 
 // выводим фрагмент в dom
+
+
+PIN_WRAPPER.appendChild(fragment1);
+
+
+var fragment = document.createDocumentFragment();
+fragment.appendChild(getNewDescription(mockData()[0]));
+
+
+// выводим фрагмент в dom
+
 
 PIN_WRAPPER.appendChild(fragment);
