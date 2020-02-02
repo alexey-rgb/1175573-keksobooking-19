@@ -12,6 +12,7 @@ var MIN_MAP_WIDTH = 1;
 var POSITION_Y_MIN = 130;
 var POSITION_Y_MAX = 630;
 var PIN_SIZE = 40;
+var PHOTO_APARTMENTS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 
 // объявляем константы для доступа к dom-элементам
 
@@ -39,7 +40,6 @@ var mockData = function () {
   var objects = [];
   for (var i = 0; i < OBJECT_NUMBER; i++) {
     objects.push({
-        /*'avatar': '../img/avatars/user' + i + 1 + '.png',*/
         'avatar': 'img/avatars/user0' + (i + 1) + '.png',
         'title': 'заголовок объявления',
         'address': (location.x, location.y),
@@ -51,12 +51,13 @@ var mockData = function () {
         'checkout': getRandomElementArray(CHECKS),
         'features': 'wifi, dishwasher, parking, washer, elevator, conditioner',
         'description': 'строка с описанием',
+        'photos': getRandomElementArray(PHOTO_APARTMENTS),
         'location': {
           x: random(MIN_MAP_WIDTH, MAX_MAP_WIDTH),
-          y: random(POSITION_Y_MIN, POSITION_Y_MAX),
+          y: random(POSITION_Y_MIN, POSITION_Y_MAX)
         },
       }
-    );
+    )
   }
   return objects;
 };
@@ -67,59 +68,44 @@ MAP.classList.remove('map--faded');
 
 // создаем 2 функции, для клонирования шаблона метки и карточки(с описанием объявления) и для изменения содержания этих элементов
 
-var getNewDescription = function () {
+var getNewDescription = function (item) {
   var cardElement = CARD_TEMPLATE.cloneNode(true);
-  var pinElement = PIN_TEMPLATE.cloneNode(true);
-  mockData().forEach(function (item, i) {
-    cardElement.querySelector('.popup__avatar').src = item.avatar;
-    cardElement.querySelector('.popup__title').textContent = item.title;
-    cardElement.querySelector('.popup__text--address').textContent = item.address;
-    cardElement.querySelector('.popup__text--price').textContent = item.price;
-    cardElement.querySelector('.popup__type').textContent = item.type;
-    cardElement.querySelector('.popup__text--capacity').textContent = item.rooms + item.guests;
-    cardElement.querySelector('.popup__text--time').textContent = item.checkin + item.checkout;
-    cardElement.querySelector('.popup__features').textContent = item.features;
-    cardElement.querySelector('.popup__description').textContent = item.description;
-    //   pinElement.querySelector('/*.pin__*/img').src = item.avatar;
-    //   pinElement.querySelector('/*.pin__*/img').alt = item.title;
-    //   pinElement.style.left = item.location.x + (-40 * 0.5) + 'px';
-    //   pinElement.style.top = item.location.y + (-PIN_SIZE * 0.5) + 'px';
-    //   console.info(item);
-  });
-  /*return cardElement && pinElement;*/
+  cardElement.querySelector('.popup__photo').src = item.photos;
+  cardElement.querySelector('.popup__avatar').src = item.avatar;
+  cardElement.querySelector('.popup__title').textContent = item.title;
+  cardElement.querySelector('.popup__text--address').textContent = item.address;
+  cardElement.querySelector('.popup__text--price').textContent = item.price;
+  cardElement.querySelector('.popup__type').textContent = item.type;
+  cardElement.querySelector('.popup__text--capacity').textContent = item.rooms + item.guests;
+  cardElement.querySelector('.popup__text--time').textContent = item.checkin + item.checkout;
+  cardElement.querySelector('.popup__features').textContent = item.features;
+  cardElement.querySelector('.popup__description').textContent = item.description;
   return cardElement;
 };
 
 var getNewPin = function (item) {
   var pinElement = PIN_TEMPLATE.cloneNode(true);
-  pinElement.querySelector('/*.pin__*/img').src = item.avatar;
-  pinElement.querySelector('/*.pin__*/img').alt = item.title;
-  pinElement.style.left = (item.location.x + (-40 * 0.5)) + 'px';
+  pinElement.querySelector('.pin__img').src = item.avatar;
+  pinElement.querySelector('.pin__img').alt = item.title;
+  pinElement.style.left = (item.location.x + (-PIN_SIZE * 0.5)) + 'px';
   pinElement.style.top = (item.location.y + (-PIN_SIZE * 0.5)) + 'px';
-  /*console.log(pinElement);*/
-
   return pinElement;
 };
-
 
 // записываем полученную информацию во фрагмент
 
 var fragment1 = document.createDocumentFragment();
-mockData().forEach(function (item) {
+mockData().forEach(function (item, i) {
   fragment1.appendChild(getNewPin(item));
 });
 
 // выводим фрагмент в dom
 
-
 PIN_WRAPPER.appendChild(fragment1);
-
 
 var fragment = document.createDocumentFragment();
 fragment.appendChild(getNewDescription(mockData()[0]));
 
-
 // выводим фрагмент в dom
-
 
 PIN_WRAPPER.appendChild(fragment);
