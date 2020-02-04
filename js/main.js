@@ -5,43 +5,73 @@
 var OBJECT_NUMBER = 8;
 var MIN = 1;
 var MAX = 10;
-var MAX_PRICE = 5000;
-var MIN_PRICE = 1000;
+var Price = {
+  MIN: 1000,
+  MAX: 10000
+};
+var MapWidth = {
+  MAX_WIDTH: Math.floor(100 - 3.3),
+  MIN_WIDTH: Math.floor(3.3)
+};
 var TYPES = ['Дворец', 'Квартира', 'Дом', 'Бунгало'];
 var CHECKS = ['12:00', '13:00', '14:00'];
-var MAX_MAP_WIDTH = 100;
-var MIN_MAP_WIDTH = 20;
 var POSITION_Y_MIN = 130;
 var POSITION_Y_MAX = 630;
-var PIN_SIZE = 40;
-var PHOTO_APARTMENTS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+var PIN_SIZE = Math.floor(3.3);
+var PHOTO_APARTMENTS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg',
+  'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
+  'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+
+var PIN_POSITION_FORMULA = (PIN_SIZE * 0.5);
+var APARTMENTS_ADVANTAGES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 
 // объявляем константы для доступа к dom-элементам
 
-var CARD_TEMPLATE = document.querySelector('#card').content.querySelector('.map__card');
-var PIN_TEMPLATE = document.querySelector('#pin').content.querySelector('.map__pin');
-/*var PIN_WRAPPER = document.querySelector('.map__pins');*/
-var MAP = document.querySelector('.map');
+var nodes = {
+  CARD_TEMPLATE: document.querySelector('#card').content.querySelector('.map__card'),
+  PIN_TEMPLATE: document.querySelector('#pin').content.querySelector('.map__pin'),
+  MAP: document.querySelector('.map')
+};
 
 // создаем функции, для получения прозвольных значений свойств объекта(описание объявления)
 
-var random = function (min, max) {
+var getRandomBetween = function (min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-var getRandomElementArray = function (arr) {
-  return arr[random(0, arr.length - 1)];
+var getRandomItem = function (arr) {
+  return arr[getRandomBetween(0, arr.length - 1)];
 };
 
-var positionX = function () {
-  return random(MIN_MAP_WIDTH, MAX_MAP_WIDTH);
+var getRandomItemLength = function (arr) {
+  var items = [];
+  for (var i = 0; i <= getRandomBetween(0, arr.length); i++) {
+    var currentItem = arr[i];
+    items.push(currentItem);
+  }
+  return items;
 };
 
-var positionY = function () {
-  return random(POSITION_Y_MIN, POSITION_Y_MAX);
+var getRandomX = function () {
+  return getRandomBetween(MapWidth.MIN_WIDTH, MapWidth.MAX_WIDTH);
 };
+
+var getRandomY = function () {
+  return getRandomBetween(POSITION_Y_MIN, POSITION_Y_MAX);
+};
+
+// функция которая внтури цикла длинною arr.length записывает сгенерированные <img> во фрагмент
+// и на каждом витке добавляет в src PHOTO_APARTMENTS[i]
+
+/*var makeImage = function (arr) {
+  var fragment3 = document.createDocumentFragment();
+  for (var i = 0; i <= getRandomItemLength(arr).length; i++) {
+    fragment3.appendChild(document.createElement('img') + 'src="' + arr[i] + '"');
+  }
+  return fragment3;
+};*/
 
 // создаем функцию для генерации 8 объектов
 
@@ -49,22 +79,24 @@ var mockData = function () {
   // создаем пустой массив объектов
   var objects = [];
   for (var i = 0; i < OBJECT_NUMBER; i++) {
+    var positionX = getRandomX();
+    var positionY = getRandomY();
     objects.push({
       'avatar': 'img/avatars/user0' + (i + 1) + '.png',
       'title': 'заголовок объявления',
-      'address': '{' + String(positionX()) + ',' + String(positionY()) + '}',
-      'price': random(MIN_PRICE, MAX_PRICE) + ' Рублей/ночь',
-      'type': getRandomElementArray(TYPES),
-      'rooms': random(MIN, MAX),
-      'guests': random(MIN, MAX),
-      'checkin': getRandomElementArray(CHECKS),
-      'checkout': getRandomElementArray(CHECKS),
-      'features': 'wifi, dishwasher, parking, washer, elevator, conditioner',
+      'address': '{' + positionX + ',' + positionY + '}',
+      'price': getRandomBetween(Price.MIN, Price.MAX) + ' Рублей/ночь',
+      'type': getRandomItem(TYPES),
+      'rooms': getRandomBetween(MIN, MAX),
+      'guests': getRandomBetween(MIN, MAX),
+      'checkin': getRandomItem(CHECKS),
+      'checkout': getRandomItem(CHECKS),
+      'features': getRandomItemLength(APARTMENTS_ADVANTAGES),
       'description': 'Уютное местечко',
-      'photos': PHOTO_APARTMENTS,
+      //'photos': makeImage(PHOTO_APARTMENTS),
       'location': {
-        'x': positionX(),
-        'y': positionY(),
+        'x': positionX,
+        'y': positionY,
       }
     });
   }
@@ -73,13 +105,13 @@ var mockData = function () {
 
 // показываем карту обявлений
 
-MAP.classList.remove('map--faded');
+nodes.MAP.classList.remove('map--faded');
 
 // создаем 2 функции, для клонирования шаблона метки и карточки(с описанием объявления) и для изменения содержания этих элементов
 
 var getNewDescription = function (item) {
-  var cardElement = CARD_TEMPLATE.cloneNode(true);
-  cardElement.querySelector('.popup__photo').src = item.photos[0];
+  var cardElement = nodes.CARD_TEMPLATE.cloneNode(true);
+  //cardElement.querySelector('.popup__photos').appendChild(item.photos);
   cardElement.querySelector('.popup__avatar').src = item.avatar;
   cardElement.querySelector('.popup__title').textContent = item.title;
   cardElement.querySelector('.popup__text--address').textContent = item.address;
@@ -93,24 +125,29 @@ var getNewDescription = function (item) {
 };
 
 var getNewPin = function (item) {
-  var pinElement = PIN_TEMPLATE.cloneNode(true);
-  pinElement.querySelector('.pin__img').src = item.avatar;
-  pinElement.querySelector('.pin__img').alt = item.title;
-  pinElement.style.left = (item.location.x + (-PIN_SIZE * 0.5)) + '%';
-  pinElement.style.top = (item.location.y + (-PIN_SIZE * 0.5)) + 'px';
+  var pinElement = nodes.PIN_TEMPLATE.cloneNode(true);
+  pinElement.querySelector('img').src = item.avatar;
+  pinElement.querySelector('img').alt = item.title;
+  pinElement.style.left = (item.location.x) + (-PIN_POSITION_FORMULA) + '%';
+  pinElement.style.top = 'calc(' + (item.location.y) + 'px + ' + (PIN_POSITION_FORMULA * 2) + '%)';
   return pinElement;
 };
 
 // записываем во фрагмент
 
-var fragment1 = document.createDocumentFragment();
-mockData().forEach(function (item) {
-  fragment1.appendChild(getNewPin(item));
-});
+var fillFragment = function (process) {
+  var fragment1 = document.createDocumentFragment();
+  process.forEach(function (item) {
+    fragment1.appendChild(getNewPin(item));
+  });
+  return fragment1;
+};
+
+var process = mockData();
 
 // выводим фрагмент в dom
 
-MAP.appendChild(fragment1);
+nodes.MAP.appendChild(fillFragment(process));
 
 // записываем во фрагмент
 
@@ -119,4 +156,4 @@ fragment.appendChild(getNewDescription(mockData()[0]));
 
 // выводим фрагмент в dom
 
-MAP.appendChild(fragment);
+nodes.MAP.appendChild(fragment);
