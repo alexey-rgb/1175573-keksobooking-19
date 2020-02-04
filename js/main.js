@@ -65,13 +65,15 @@ var getRandomY = function () {
 // функция которая внтури цикла длинною arr.length записывает сгенерированные <img> во фрагмент
 // и на каждом витке добавляет в src PHOTO_APARTMENTS[i]
 
-/*var makeImage = function (arr) {
+var makeImage = function (arr) {
   var fragment3 = document.createDocumentFragment();
+  var newElement = document.createElement('img');
   for (var i = 0; i <= getRandomItemLength(arr).length; i++) {
-    fragment3.appendChild(document.createElement('img') + 'src="' + arr[i] + '"');
+    newElement.src = arr[i];
+    fragment3.appendChild(newElement);
   }
   return fragment3;
-};*/
+};
 
 // создаем функцию для генерации 8 объектов
 
@@ -93,7 +95,7 @@ var mockData = function () {
       'checkout': getRandomItem(CHECKS),
       'features': getRandomItemLength(APARTMENTS_ADVANTAGES),
       'description': 'Уютное местечко',
-      //'photos': makeImage(PHOTO_APARTMENTS),
+      'photos': makeImage(PHOTO_APARTMENTS),
       'location': {
         'x': positionX,
         'y': positionY,
@@ -111,7 +113,7 @@ nodes.MAP.classList.remove('map--faded');
 
 var getNewDescription = function (item) {
   var cardElement = nodes.CARD_TEMPLATE.cloneNode(true);
-  //cardElement.querySelector('.popup__photos').appendChild(item.photos);
+  cardElement.querySelector('.popup__photos').appendChild(item.photos);
   cardElement.querySelector('.popup__avatar').src = item.avatar;
   cardElement.querySelector('.popup__title').textContent = item.title;
   cardElement.querySelector('.popup__text--address').textContent = item.address;
