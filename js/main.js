@@ -67,8 +67,8 @@ var getRandomY = function () {
 
 var makeImage = function (arr) {
   var fragment3 = document.createDocumentFragment();
-  var newElement = document.createElement('img');
   for (var i = 0; i <= getRandomItemLength(arr).length; i++) {
+    var newElement = document.createElement('img');
     newElement.src = arr[i];
     fragment3.appendChild(newElement);
   }
