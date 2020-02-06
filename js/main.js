@@ -41,8 +41,6 @@ var nodes = {
 // создаем функции, для получения прозвольных значений свойств объекта(описание объявления)
 
 var getRandomBetween = function (min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
@@ -61,14 +59,14 @@ var getRandomItems = function (arr) {
 };
 
 // функция которая внтури цикла длинною arr.length записывает сгенерированные <img> во фрагмент
-// и на каждом витке добавляет в src PHOTO_APARTMENTS[i]
+// и на каждом витке добавляет в src + class
 
 var makeImage = function (arr) {
   var count = getRandomBetween(0, PHOTO_APARTMENTS.length - 1);
   var fragment3 = document.createDocumentFragment();
   for (var i = 0; i <= count; i++) {
-    var newElement = document.createElement('img');
-    newElement.src = arr[i + getRandomBetween(i, PHOTO_APARTMENTS.length - 1)];
+    var newElement = document.querySelector('#card').content.querySelector('.popup__photos').cloneNode(true);
+    newElement.querySelector('.popup__photo').src = arr[i + getRandomBetween(0, PHOTO_APARTMENTS.length - 2)];
     fragment3.appendChild(newElement);
   }
   return fragment3;
@@ -85,7 +83,7 @@ var mockData = function () {
     objects.push({
       'avatar': 'img/avatars/user0' + (i + 1) + '.png',
       'title': 'заголовок объявления',
-      'address': '{' + positionX + ',' + positionY + '}',
+      'address': '' + positionX + ', ' + positionY,
       'price': getRandomBetween(Price.MIN, Price.MAX) + ' Рублей/ночь',
       'type': getRandomItem(TYPES),
       'rooms': getRandomBetween(MIN, MAX),
@@ -108,7 +106,6 @@ var mockData = function () {
 
 var getNewDescription = function (item) {
   var cardElement = nodes.CARD_TEMPLATE.cloneNode(true);
-  cardElement.querySelector('.popup__photos').appendChild(item.photos);
   cardElement.querySelector('.popup__avatar').src = item.avatar;
   cardElement.querySelector('.popup__title').textContent = item.title;
   cardElement.querySelector('.popup__text--address').textContent = item.address;
@@ -118,6 +115,7 @@ var getNewDescription = function (item) {
   cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + item.checkin + ', выезд до ' + item.checkout;
   cardElement.querySelector('.popup__features').textContent = item.features;
   cardElement.querySelector('.popup__description').textContent = item.description;
+  cardElement.querySelector('.popup__photos').appendChild(item.photos);
   return cardElement;
 };
 
@@ -153,6 +151,10 @@ var mock = getNewDescription(process[getRandomBetween(0, process.length - 1)]);
 // выводим мок в dom
 
 nodes.MAP.appendChild(mock);
+
+// скрываем элемент
+
+document.querySelector('.popup__photo').hidden = true;
 
 // показываем карту обявлений
 
