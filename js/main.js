@@ -10,13 +10,15 @@ var Price = {
   MAX: 10000
 };
 var MapWidth = {
-  MAX_WIDTH: Math.floor(100 - 3.3),
-  MIN_WIDTH: Math.floor(3.3)
+  MAX: Math.floor(100 - 3.3),
+  MIN: Math.floor(3.3)
 };
 var TYPES = ['Дворец', 'Квартира', 'Дом', 'Бунгало'];
 var CHECKS = ['12:00', '13:00', '14:00'];
-var POSITION_Y_MIN = 130;
-var POSITION_Y_MAX = 630;
+var Position = {
+  Y_MIN: 130,
+  Y_MAX: 630,
+};
 var PIN_SIZE = Math.floor(3.3);
 var PHOTO_APARTMENTS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
@@ -45,31 +47,33 @@ var getRandomItem = function (arr) {
   return arr[getRandomBetween(0, arr.length - 1)];
 };
 
-var getRandomItemLength = function (arr) {
+var getRandomItems = function (arr) {
+  var randomNumberOfApartmentFeatures = getRandomBetween(0, TYPES.length);
   var items = [];
-  for (var i = 0; i <= getRandomBetween(0, arr.length); i++) {
-    var currentItem = arr[i];
+  for (var i = 0; i <= randomNumberOfApartmentFeatures; i++) {
+    var currentItem = arr[i + getRandomBetween(i, TYPES.length - 1)];
     items.push(currentItem);
   }
   return items;
 };
 
 var getRandomX = function () {
-  return getRandomBetween(MapWidth.MIN_WIDTH, MapWidth.MAX_WIDTH);
+  return getRandomBetween(MapWidth.MIN, MapWidth.MAX);
 };
 
 var getRandomY = function () {
-  return getRandomBetween(POSITION_Y_MIN, POSITION_Y_MAX);
+  return getRandomBetween(Position.Y_MIN, Position.Y_MAX);
 };
 
 // функция которая внтури цикла длинною arr.length записывает сгенерированные <img> во фрагмент
 // и на каждом витке добавляет в src PHOTO_APARTMENTS[i]
 
 var makeImage = function (arr) {
+  var randomNumberOfApartmentImage = getRandomBetween(0, PHOTO_APARTMENTS.length);
   var fragment3 = document.createDocumentFragment();
-  for (var i = 0; i <= getRandomItemLength(arr).length; i++) {
+  for (var i = 0; i <= randomNumberOfApartmentImage; i++) {
     var newElement = document.createElement('img');
-    newElement.src = arr[i];
+    newElement.src = arr[i + getRandomBetween(i, PHOTO_APARTMENTS.length - 1)];
     fragment3.appendChild(newElement);
   }
   return fragment3;
@@ -93,7 +97,7 @@ var mockData = function () {
       'guests': getRandomBetween(MIN, MAX),
       'checkin': getRandomItem(CHECKS),
       'checkout': getRandomItem(CHECKS),
-      'features': getRandomItemLength(APARTMENTS_ADVANTAGES),
+      'features': getRandomItems(APARTMENTS_ADVANTAGES),
       'description': 'Уютное местечко',
       'photos': makeImage(PHOTO_APARTMENTS),
       'location': {
@@ -104,10 +108,6 @@ var mockData = function () {
   }
   return objects;
 };
-
-// показываем карту обявлений
-
-nodes.MAP.classList.remove('map--faded');
 
 // создаем 2 функции, для клонирования шаблона метки и карточки(с описанием объявления) и для изменения содержания этих элементов
 
@@ -137,7 +137,7 @@ var getNewPin = function (item) {
 
 // записываем во фрагмент
 
-var fillFragment = function (process) {
+var fillFragment = function () {
   var fragment1 = document.createDocumentFragment();
   process.forEach(function (item) {
     fragment1.appendChild(getNewPin(item));
@@ -153,9 +153,15 @@ nodes.MAP.appendChild(fillFragment(process));
 
 // записываем во фрагмент
 
+var mock = getNewDescription(process[getRandomBetween(0, process.length - 1)]);
+
 var fragment = document.createDocumentFragment();
-fragment.appendChild(getNewDescription(mockData()[0]));
+fragment.appendChild(mock);
 
 // выводим фрагмент в dom
 
 nodes.MAP.appendChild(fragment);
+
+// показываем карту обявлений
+
+nodes.MAP.classList.remove('.map--faded');
