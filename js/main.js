@@ -9,9 +9,13 @@ var Price = {
   MIN: 1000,
   MAX: 10000
 };
+var MAX_MAP_PIXEL_WIDTH = 1200;
+var MAX_MAP_PERCENT_WIDTH = 100;
+var PIN_PIXEL_SIZE = 40;
+var PIN_PERCENT_SIZE = (PIN_PIXEL_SIZE * MAX_MAP_PERCENT_WIDTH) / MAX_MAP_PIXEL_WIDTH;
 var MapWidth = {
-  MAX: Math.floor(100 - 3.3),
-  MIN: Math.floor(3.3)
+  MAX: Math.floor(MAX_MAP_PERCENT_WIDTH - PIN_PERCENT_SIZE),
+  MIN: Math.floor(PIN_PERCENT_SIZE)
 };
 var TYPES = ['Дворец', 'Квартира', 'Дом', 'Бунгало'];
 var CHECKS = ['12:00', '13:00', '14:00'];
@@ -19,12 +23,11 @@ var Position = {
   Y_MIN: 130,
   Y_MAX: 630,
 };
-var PIN_SIZE = Math.floor(3.3);
 var PHOTO_APARTMENTS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 
-var PIN_POSITION_FORMULA = (PIN_SIZE * 0.5);
+var PIN_POSITION_FORMULA = (PIN_PERCENT_SIZE * 0.5);
 var APARTMENTS_ADVANTAGES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 
 // объявляем константы для доступа к dom-элементам
@@ -48,30 +51,22 @@ var getRandomItem = function (arr) {
 };
 
 var getRandomItems = function (arr) {
-  var randomNumberOfApartmentFeatures = getRandomBetween(0, TYPES.length);
+  var count = getRandomBetween(0, TYPES.length);
   var items = [];
-  for (var i = 0; i <= randomNumberOfApartmentFeatures; i++) {
+  for (var i = 0; i <= count; i++) {
     var currentItem = arr[i + getRandomBetween(i, TYPES.length - 1)];
     items.push(currentItem);
   }
   return items;
 };
 
-var getRandomX = function () {
-  return getRandomBetween(MapWidth.MIN, MapWidth.MAX);
-};
-
-var getRandomY = function () {
-  return getRandomBetween(Position.Y_MIN, Position.Y_MAX);
-};
-
 // функция которая внтури цикла длинною arr.length записывает сгенерированные <img> во фрагмент
 // и на каждом витке добавляет в src PHOTO_APARTMENTS[i]
 
 var makeImage = function (arr) {
-  var randomNumberOfApartmentImage = getRandomBetween(0, PHOTO_APARTMENTS.length);
+  var count = getRandomBetween(0, PHOTO_APARTMENTS.length - 1);
   var fragment3 = document.createDocumentFragment();
-  for (var i = 0; i <= randomNumberOfApartmentImage; i++) {
+  for (var i = 0; i <= count; i++) {
     var newElement = document.createElement('img');
     newElement.src = arr[i + getRandomBetween(i, PHOTO_APARTMENTS.length - 1)];
     fragment3.appendChild(newElement);
@@ -85,8 +80,8 @@ var mockData = function () {
   // создаем пустой массив объектов
   var objects = [];
   for (var i = 0; i < OBJECT_NUMBER; i++) {
-    var positionX = getRandomX();
-    var positionY = getRandomY();
+    var positionX = getRandomBetween(MapWidth.MIN, MapWidth.MAX);
+    var positionY = getRandomBetween(Position.Y_MIN, Position.Y_MAX);
     objects.push({
       'avatar': 'img/avatars/user0' + (i + 1) + '.png',
       'title': 'заголовок объявления',
@@ -131,13 +126,13 @@ var getNewPin = function (item) {
   pinElement.querySelector('img').src = item.avatar;
   pinElement.querySelector('img').alt = item.title;
   pinElement.style.left = (item.location.x) + (-PIN_POSITION_FORMULA) + '%';
-  pinElement.style.top = 'calc(' + (item.location.y) + 'px + ' + (PIN_POSITION_FORMULA * 2) + '%)';
+  pinElement.style.top = 'calc(' + (item.location.y) + 'px + ' + (-PIN_POSITION_FORMULA * 2) + '%)';
   return pinElement;
 };
 
 // записываем во фрагмент
 
-var fillFragment = function () {
+var fillFragment = function (process) {
   var fragment1 = document.createDocumentFragment();
   process.forEach(function (item) {
     fragment1.appendChild(getNewPin(item));
@@ -155,12 +150,9 @@ nodes.MAP.appendChild(fillFragment(process));
 
 var mock = getNewDescription(process[getRandomBetween(0, process.length - 1)]);
 
-var fragment = document.createDocumentFragment();
-fragment.appendChild(mock);
+// выводим мок в dom
 
-// выводим фрагмент в dom
-
-nodes.MAP.appendChild(fragment);
+nodes.MAP.appendChild(mock);
 
 // показываем карту обявлений
 
