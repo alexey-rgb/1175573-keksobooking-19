@@ -12,7 +12,13 @@ var Price = {
 var MAX_MAP_PIXEL_WIDTH = 1200;
 var MAX_MAP_PERCENT_WIDTH = 100;
 var PIN_PIXEL_SIZE = 40;
+var MAIN_PIN_HEIGHT = 44;
 var PIN_PERCENT_SIZE = (PIN_PIXEL_SIZE * MAX_MAP_PERCENT_WIDTH) / MAX_MAP_PIXEL_WIDTH;
+var MainPinPosition = {
+  X: 570,
+  Y: 375
+};
+var PIN_PSEUDO = 22;
 var MapWidth = {
   MAX: Math.floor(MAX_MAP_PERCENT_WIDTH - PIN_PERCENT_SIZE),
   MIN: Math.floor(PIN_PERCENT_SIZE)
@@ -36,6 +42,34 @@ var nodes = {
   CARD_TEMPLATE: document.querySelector('#card').content.querySelector('.map__card'),
   PIN_TEMPLATE: document.querySelector('#pin').content.querySelector('.map__pin'),
   MAP: document.querySelector('.map')
+};
+var form = document.querySelector('.ad-form');
+var mainPin = document.querySelector('.map__pin--main');
+
+// переменные, касаящиеся главного пина(маффин).
+
+var inputAddress = document.querySelector('#address');
+
+var mainPinPosition = (MainPinPosition.X + (PIN_PIXEL_SIZE) * 0.5) + ', ' + (MainPinPosition.Y + MAIN_PIN_HEIGHT + PIN_PSEUDO);
+
+var addressAttribute = inputAddress.setAttribute('value', mainPinPosition + '');
+
+// функция активации страницы
+
+var pageActivation = function () {
+  // активируем форму
+  form.classList.remove('ad-form--disabled');
+
+  // активируем поля ввода
+  fieldset.forEach(function (item) {
+    item.removeAttribute('disabled');
+  });
+
+  // выводим фрагмент c метками похожих объявлений в dom
+  nodes.MAP.appendChild(fillFragment(process));
+
+  // показываем карту обявлений
+  nodes.MAP.classList.remove('map--faded');
 };
 
 // создаем функции, для получения прозвольных значений свойств объекта(описание объявления)
@@ -140,22 +174,68 @@ var fillFragment = function (process) {
 
 var process = mockData();
 
-// выводим фрагмент в dom
-
-nodes.MAP.appendChild(fillFragment(process));
-
 // записываем во фрагмент
 
-var mock = getNewDescription(process[getRandomBetween(0, process.length - 1)]);
+
+// var mock = getNewDescription(process[getRandomBetween(0, process.length - 1)]);
 
 // выводим мок в dom
 
-nodes.MAP.appendChild(mock);
+// nodes.MAP.appendChild(mock);
 
-// скрываем элемент
+// скрываем пустой элемент разметки img(из списка фотографий, описывающих апартаменты)
 
-document.querySelector('.popup__photo').hidden = true;
+// document.querySelector('.popup__photo').hidden = true;
 
-// показываем карту обявлений
+var fieldset = form.querySelectorAll('.ad-form__element');
+fieldset.forEach(function (item) {
+  item.setAttribute('disabled', 'disabled');
+});
 
-nodes.MAP.classList.remove('.map--faded');
+var fixAddressValue = function () {
+  return addressAttribute;
+};
+
+// активация страницы кликом
+
+mainPin.addEventListener('mousedown', function (evt) {
+    if (typeof evt === 'object') {
+      switch (evt.button) {
+        case 0:
+          break;
+      }
+      pageActivation();
+      fixAddressValue();
+    }
+  }
+);
+
+// активация страницы с клавиатуры
+
+mainPin.addEventListener('keydown', function (evt) {
+    if (evt.key === 'Enter') {
+      pageActivation();
+    }
+  }
+);
+
+// получить текущее value у (#room_number option)-кол-во комнат
+var roomNumber = document.querySelector('#room_number');
+var currentValue = roomNumber.addEventListener('change', function () {
+  return roomNumber.value;
+});
+
+
+// получить текущее value у (#capacity option)-кол-во гостей
+// отловить событие change на поле ввода кол-ва гостей
+// и добавить проверку, в которой сравнить 1 и 2 пункт
+// если не равно, то уведомление в поле ввода количества гостей - setCustomValidity.
+var capacity = document.querySelector('#capacity');
+var currentValue2 = capacity.addEventListener('change', function () {
+  return capacity.value;
+});
+
+if (currentValue2 !== currentValue) {
+  capacity.setCustomValidity('кол-во гостей должны быть равно количеству комнат');
+}
+
