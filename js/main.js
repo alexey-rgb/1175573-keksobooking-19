@@ -219,23 +219,21 @@ mainPin.addEventListener('keydown', function (evt) {
   }
 );
 
-// получить текущее value у (#room_number option)-кол-во комнат
-var roomNumber = document.querySelector('#room_number');
-var currentValue = roomNumber.addEventListener('change', function () {
-  return roomNumber.value;
-});
+var findDifference = function () {
+  var roomNumber = document.querySelector('#room_number').value;
+  var capacity = document.querySelector('#capacity');
+  capacity.addEventListener('change', function () {
+    return capacity.value;
+  });
+  if (roomNumber !== capacity.value) {
+    capacity.setCustomValidity('кол-во гостей должны быть равно количеству комнат');
+  } else {
+    form.submit();
+    capacity.setCustomValidity('');
+  }
+};
 
+var buttonSubmit = document.querySelector('.ad-form__submit');
 
-// получить текущее value у (#capacity option)-кол-во гостей
-// отловить событие change на поле ввода кол-ва гостей
-// и добавить проверку, в которой сравнить 1 и 2 пункт
-// если не равно, то уведомление в поле ввода количества гостей - setCustomValidity.
-var capacity = document.querySelector('#capacity');
-var currentValue2 = capacity.addEventListener('change', function () {
-  return capacity.value;
-});
-
-if (currentValue2 !== currentValue) {
-  capacity.setCustomValidity('кол-во гостей должны быть равно количеству комнат');
-}
+buttonSubmit.addEventListener('click', findDifference);
 
