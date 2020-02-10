@@ -136,7 +136,7 @@ var mockData = function () {
   return objects;
 };
 
-// создаем 2 функции, для клонирования шаблона метки и карточки(с описанием объявления) и для изменения содержания этих элементов
+// клонируем карточку
 
 var getNewDescription = function (item) {
   var cardElement = nodes.CARD_TEMPLATE.cloneNode(true);
@@ -150,8 +150,17 @@ var getNewDescription = function (item) {
   cardElement.querySelector('.popup__features').textContent = item.features;
   cardElement.querySelector('.popup__description').textContent = item.description;
   cardElement.querySelector('.popup__photos').appendChild(item.photos);
+  cardElement.querySelector('.popup__photos')
   return cardElement;
 };
+
+var process = mockData();
+
+// записываем во фрагмент
+
+var mock = getNewDescription(process[getRandomBetween(0, process.length - 1)]);
+
+// функция создания пина
 
 var getNewPin = function (item) {
   var pinElement = nodes.PIN_TEMPLATE.cloneNode(true);
@@ -159,12 +168,17 @@ var getNewPin = function (item) {
   pinElement.querySelector('img').alt = item.title;
   pinElement.style.left = (item.location.x) + (-PIN_POSITION_FORMULA) + '%';
   pinElement.style.top = 'calc(' + (item.location.y) + 'px + ' + (-PIN_POSITION_FORMULA * 2) + '%)';
+  // при клике на пин показываем карточку с описанием
+  pinElement.addEventListener('click', function () {
+    // выводим мок в dom
+    nodes.MAP.appendChild(mock);
+  });
   return pinElement;
 };
 
 // записываем во фрагмент
 
-var fillFragment = function (process) {
+var fillFragment = function () {
   var fragment1 = document.createDocumentFragment();
   process.forEach(function (item) {
     fragment1.appendChild(getNewPin(item));
@@ -172,25 +186,18 @@ var fillFragment = function (process) {
   return fragment1;
 };
 
-var process = mockData();
-
-// записываем во фрагмент
-
-
-// var mock = getNewDescription(process[getRandomBetween(0, process.length - 1)]);
-
-// выводим мок в dom
-
-// nodes.MAP.appendChild(mock);
-
 // скрываем пустой элемент разметки img(из списка фотографий, описывающих апартаменты)
 
 // document.querySelector('.popup__photo').hidden = true;
+
+// блокируем поля ввода
 
 var fieldset = form.querySelectorAll('.ad-form__element');
 fieldset.forEach(function (item) {
   item.setAttribute('disabled', 'disabled');
 });
+
+// функция отрисовки координат метки в поле ввода адреса.
 
 var fixAddressValue = function () {
   return addressAttribute;
@@ -206,6 +213,7 @@ mainPin.addEventListener('mousedown', function (evt) {
       }
       pageActivation();
       fixAddressValue();
+      document.querySelector('.popup__photo').hidden = true;
     }
   }
 );
@@ -219,6 +227,8 @@ mainPin.addEventListener('keydown', function (evt) {
   }
 );
 
+// синхронизация полей ввода гостей и количества комнат
+
 var findDifference = function () {
   var roomNumber = document.querySelector('#room_number').value;
   var capacity = document.querySelector('#capacity');
@@ -228,7 +238,6 @@ var findDifference = function () {
   if (roomNumber !== capacity.value) {
     capacity.setCustomValidity('кол-во гостей должны быть равно количеству комнат');
   } else {
-    form.submit();
     capacity.setCustomValidity('');
   }
 };
@@ -237,3 +246,14 @@ var buttonSubmit = document.querySelector('.ad-form__submit');
 
 buttonSubmit.addEventListener('click', findDifference);
 
+/* вариант синхронизации через добавления атрибута onchange тегу #capacity разметки
+
+function check() {
+  var capacity = document.querySelector('#capacity');
+  var roomNumber = document.querySelector('#room_number').value;
+  if (capacity.value !== roomNumber) {
+    capacity.setCustomValidity('значение должно быть равно ' + roomNumber);
+  } else {
+    capacity.setCustomValidity('');
+  }
+}*/
