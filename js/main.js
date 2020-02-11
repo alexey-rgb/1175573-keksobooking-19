@@ -207,6 +207,10 @@ fieldset.forEach(function (item) {
   item.setAttribute('disabled', 'disabled');
 });
 
+// блокируем возможность редактирования поля с адресом
+
+inputAddress.setAttribute('disabled', 'disabled');
+
 // функция отрисовки координат метки в поле ввода адреса.
 
 var fixAddressValue = function () {
@@ -295,13 +299,41 @@ var validateForm = function () {
 
 buttonSubmit.addEventListener('click', validateForm);
 
-
+// валидация цены и типа жилья
 
 var type = document.querySelector('#type');
 type.addEventListener('change', function () {
   var priceInput = document.querySelector('#price');
   if (type.value === 'bungalo') {
     priceInput.setAttribute('min', '0');
-    priceInput.setAttribute('placeholder', 'эминимальная цена 0');
+    priceInput.setAttribute('placeholder', 'от 0/рублей');
+  }
+  if (type.value === 'flat') {
+    priceInput.setAttribute('min', '1000');
+    priceInput.setAttribute('placeholder', 'от 1000/рублей');
+  }
+  if (type.value === 'house') {
+    priceInput.setAttribute('min', '5000');
+    priceInput.setAttribute('placeholder', 'от 5000/рублей');
+  }
+  if (type.value === 'palace') {
+    priceInput.setAttribute('min', '10000');
+    priceInput.setAttribute('placeholder', 'от 10000/рублей');
+  }
+});
+
+// валидация врема заезда/выезда
+
+var timeIn = document.querySelector('#timein');
+var timeOut = document.querySelector('#timeout');
+timeIn.addEventListener('change', function () {
+  if (timeIn.value === '12:00') {
+    timeOut.value = timeIn.value;
+  }
+  if (timeIn.value === '13:00') {
+    timeOut.value = timeIn.value;
+  }
+  if (timeIn.value === '14:00') {
+    timeOut.value = timeIn.value;
   }
 });
