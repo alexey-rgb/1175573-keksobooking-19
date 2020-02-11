@@ -100,7 +100,7 @@ var makeImage = function (arr) {
   var fragment3 = document.createDocumentFragment();
   for (var i = 0; i <= count; i++) {
     var newElement = document.querySelector('#card').content.querySelector('.popup__photos').cloneNode(true);
-    newElement.querySelector('.popup__photo').src = arr[i + getRandomBetween(0, PHOTO_APARTMENTS.length - 2)];
+    newElement.querySelector('.popup__photo').src = arr[i + getRandomBetween(0, PHOTO_APARTMENTS.length - 1)];
     fragment3.appendChild(newElement);
   }
   return fragment3;
@@ -136,6 +136,10 @@ var mockData = function () {
   return objects;
 };
 
+// записываем функцию получения рандомного объекта в переменную
+
+var process = mockData();
+
 // клонируем карточку
 
 var getNewDescription = function (item) {
@@ -150,33 +154,43 @@ var getNewDescription = function (item) {
   cardElement.querySelector('.popup__features').textContent = item.features;
   cardElement.querySelector('.popup__description').textContent = item.description;
   cardElement.querySelector('.popup__photos').appendChild(item.photos);
-  cardElement.querySelector('.popup__photos')
+  cardElement.querySelector('.popup__photo').remove();
+  cardElement.querySelector('.popup__close').setAttribute('tabindex', '1');
+  cardElement.querySelector('.popup__close').addEventListener('click', function () {
+    cardElement.remove();
+  });
+  document.addEventListener('keydown', function (evt) {
+    if (evt.key === 'Escape') {
+      cardElement.remove();
+    }
+  });
   return cardElement;
 };
-
-var process = mockData();
-
-// записываем во фрагмент
-
-var mock = getNewDescription(process[getRandomBetween(0, process.length - 1)]);
 
 // функция создания пина
 
 var getNewPin = function (item) {
+  // создаем клон карточки используя произвольный объект для заполнения шаблона
+  var mock = getNewDescription(item);
+
+  // клонируем
   var pinElement = nodes.PIN_TEMPLATE.cloneNode(true);
   pinElement.querySelector('img').src = item.avatar;
   pinElement.querySelector('img').alt = item.title;
   pinElement.style.left = (item.location.x) + (-PIN_POSITION_FORMULA) + '%';
   pinElement.style.top = 'calc(' + (item.location.y) + 'px + ' + (-PIN_POSITION_FORMULA * 2) + '%)';
+  pinElement.setAttribute('tabindex', '1');
+
   // при клике на пин показываем карточку с описанием
   pinElement.addEventListener('click', function () {
+
     // выводим мок в dom
     nodes.MAP.appendChild(mock);
   });
   return pinElement;
 };
 
-// записываем во фрагмент
+// записываем во фрагмент пины
 
 var fillFragment = function () {
   var fragment1 = document.createDocumentFragment();
@@ -185,10 +199,6 @@ var fillFragment = function () {
   });
   return fragment1;
 };
-
-// скрываем пустой элемент разметки img(из списка фотографий, описывающих апартаменты)
-
-// document.querySelector('.popup__photo').hidden = true;
 
 // блокируем поля ввода
 
@@ -246,7 +256,7 @@ var buttonSubmit = document.querySelector('.ad-form__submit');
 
 buttonSubmit.addEventListener('click', findDifference);
 
-/* вариант синхронизации через добавления атрибута onchange тегу #capacity разметки
+/* вариант синхронизации полей(гости и комнаты) через добавления атрибута onchange тегу #capacity разметки
 
 function check() {
   var capacity = document.querySelector('#capacity');
@@ -257,3 +267,41 @@ function check() {
     capacity.setCustomValidity('');
   }
 }*/
+
+// делегирование nodes.MAP(общий родитель). Но тут только на 1 случайный пин срабатывает и то не всегда
+
+/*
+nodes.MAP.addEventListener('click', function (evt) {
+  if (evt.target && evt.currentTarget.matches && evt.target.matches('button[type="button"]')) {
+    nodes.MAP.appendChild(mock);
+  }
+});
+*/
+
+// ПОЧЕМУ НЕ ПОЛУЧАЕТСЯ ЭТУ ФУНКЦИЮ В РАЗМЕТКУ ONCHAGE ЗАПИСАТЬ. ХОЧЕТСЯ БЕЗ СОБЫТИЯ НА BUTTON СРАБОТАЛО?
+
+var validateForm = function () {
+  var titleInput = document.querySelector('#title');
+  var MIN_LENGTH = 30;
+  var MAX_LENGTH = 30;
+  titleInput.addEventListener('change', function () {
+    if (titleInput.value.trim().length < MIN_LENGTH && titleInput.value.trim().length < MAX_LENGTH) {
+      titleInput.setCustomValidity('не меньше 30 и не больше 100 символов');
+    } else {
+      titleInput.setCustomValidity('');
+    }
+  });
+};
+
+buttonSubmit.addEventListener('click', validateForm);
+
+
+
+var type = document.querySelector('#type');
+type.addEventListener('change', function () {
+  var priceInput = document.querySelector('#price');
+  if (type.value === 'bungalo') {
+    priceInput.setAttribute('min', '0');
+    priceInput.setAttribute('placeholder', 'эминимальная цена 0');
+  }
+});
