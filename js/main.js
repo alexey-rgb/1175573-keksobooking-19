@@ -38,27 +38,31 @@ var APARTMENTS_ADVANTAGES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevato
 
 // объявляем константы для доступа к dom-элементам
 
-var nodes = {
+var Nodes = {
   CARD_TEMPLATE: document.querySelector('#card').content.querySelector('.map__card'),
   PIN_TEMPLATE: document.querySelector('#pin').content.querySelector('.map__pin'),
-  MAP: document.querySelector('.map')
+  MAP: document.querySelector('.map'),
+  form: document.querySelector('.ad-form'),
+  mainPin: document.querySelector('.map__pin--main'),
+
+  // переменные, касаящиеся главного пина(маффин).
+
+  inputAddress: document.querySelector('#address'),
 };
-var form = document.querySelector('.ad-form');
-var mainPin = document.querySelector('.map__pin--main');
 
-// переменные, касаящиеся главного пина(маффин).
-
-var inputAddress = document.querySelector('#address');
+// координаты гланого пина
 
 var mainPinPosition = (MainPinPosition.X + (PIN_PIXEL_SIZE) * 0.5) + ', ' + (MainPinPosition.Y + MAIN_PIN_HEIGHT + PIN_PSEUDO);
 
-var addressAttribute = inputAddress.setAttribute('value', mainPinPosition + '');
+// переменная содержит метод добавления координат в поле адрес
+
+var addressAttribute = Nodes.inputAddress.setAttribute('value', mainPinPosition + '');
 
 // функция активации страницы
 
 var pageActivation = function () {
   // активируем форму
-  form.classList.remove('ad-form--disabled');
+  Nodes.form.classList.remove('ad-form--disabled');
 
   // активируем поля ввода
   fieldset.forEach(function (item) {
@@ -66,41 +70,53 @@ var pageActivation = function () {
   });
 
   // выводим фрагмент c метками похожих объявлений в dom
-  nodes.MAP.appendChild(fillFragment(process));
+  Nodes.MAP.appendChild(fillFragment(process));
 
   // показываем карту обявлений
-  nodes.MAP.classList.remove('map--faded');
+  Nodes.MAP.classList.remove('map--faded');
 };
 
 // создаем функции, для получения прозвольных значений свойств объекта(описание объявления)
 
 var getRandomBetween = function (min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
 var getRandomItem = function (arr) {
   return arr[getRandomBetween(0, arr.length - 1)];
 };
 
-var getRandomItems = function (arr) {
-  var count = getRandomBetween(0, TYPES.length);
-  var items = [];
-  for (var i = 0; i <= count; i++) {
-    var currentItem = arr[i + getRandomBetween(i, TYPES.length - 1)];
-    items.push(currentItem);
-  }
-  return items;
+var randomNumber = function () {
+  return getRandomBetween(0, 2);
 };
+
+// Получение произвольного массива методом filter(100% рандом)
+
+var getRandomItems = function (arr) {
+  return arr.filter(randomNumber);
+};
+
+// Получение произвольного массива метод2(не 100% - возможны клоны)
+
+/* var getRandomItems2 = function (arr) {
+   var count = getRandomBetween(0, TYPES.length);
+   var items = [];
+   for (var i = 0; i <= count; i++) {
+     var currentItem = arr[i];
+     items.push(currentItem);
+   }
+ return items;
+};*/
 
 // функция которая внтури цикла длинною arr.length записывает сгенерированные <img> во фрагмент
 // и на каждом витке добавляет в src + class
 
 var makeImage = function (arr) {
-  var count = getRandomBetween(0, PHOTO_APARTMENTS.length - 1);
+  var count = getRandomBetween(1, PHOTO_APARTMENTS.length);
   var fragment3 = document.createDocumentFragment();
-  for (var i = 0; i <= count; i++) {
+  for (var i = 0; i < count; i++) {
     var newElement = document.querySelector('#card').content.querySelector('.popup__photos').cloneNode(true);
-    newElement.querySelector('.popup__photo').src = arr[i + getRandomBetween(0, PHOTO_APARTMENTS.length - 1)];
+    newElement.querySelector('.popup__photo').src = arr[i];
     fragment3.appendChild(newElement);
   }
   return fragment3;
@@ -136,14 +152,22 @@ var mockData = function () {
   return objects;
 };
 
-// записываем функцию получения рандомного объекта в переменную
+// записываем функцию получения массива с объектами рандомных свойств в переменную
 
 var process = mockData();
 
 // клонируем карточку
 
 var getNewDescription = function (item) {
-  var cardElement = nodes.CARD_TEMPLATE.cloneNode(true);
+  var cardElement = Nodes.CARD_TEMPLATE.cloneNode(true);
+  var removeCardElement = function () {
+    cardElement.remove();
+  };
+  var removeCardElementEsc = function (evt) {
+    if (evt.key === 'Escape') {
+      cardElement.remove();
+    }
+  };
   cardElement.querySelector('.popup__avatar').src = item.avatar;
   cardElement.querySelector('.popup__title').textContent = item.title;
   cardElement.querySelector('.popup__text--address').textContent = item.address;
@@ -156,16 +180,11 @@ var getNewDescription = function (item) {
   cardElement.querySelector('.popup__photos').appendChild(item.photos);
   cardElement.querySelector('.popup__photo').remove();
   cardElement.querySelector('.popup__close').setAttribute('tabindex', '1');
-  cardElement.querySelector('.popup__close').addEventListener('click', function () {
-    cardElement.remove();
-  });
-  document.addEventListener('keydown', function (evt) {
-    if (evt.key === 'Escape') {
-      cardElement.remove();
-    }
-  });
+  cardElement.querySelector('.popup__close').addEventListener('click', removeCardElement);
+  document.addEventListener('keydown', removeCardElementEsc);
   return cardElement;
 };
+
 
 // функция создания пина
 
@@ -174,7 +193,7 @@ var getNewPin = function (item) {
   var mock = getNewDescription(item);
 
   // клонируем
-  var pinElement = nodes.PIN_TEMPLATE.cloneNode(true);
+  var pinElement = Nodes.PIN_TEMPLATE.cloneNode(true);
   pinElement.querySelector('img').src = item.avatar;
   pinElement.querySelector('img').alt = item.title;
   pinElement.style.left = (item.location.x) + (-PIN_POSITION_FORMULA) + '%';
@@ -185,7 +204,7 @@ var getNewPin = function (item) {
   pinElement.addEventListener('click', function () {
 
     // выводим мок в dom
-    nodes.MAP.appendChild(mock);
+    Nodes.MAP.appendChild(mock);
   });
   return pinElement;
 };
@@ -202,14 +221,14 @@ var fillFragment = function () {
 
 // блокируем поля ввода
 
-var fieldset = form.querySelectorAll('.ad-form__element');
+var fieldset = Nodes.form.querySelectorAll('.ad-form__element');
 fieldset.forEach(function (item) {
   item.setAttribute('disabled', 'disabled');
 });
 
 // блокируем возможность редактирования поля с адресом
 
-inputAddress.setAttribute('disabled', 'disabled');
+Nodes.inputAddress.setAttribute('disabled', 'disabled');
 
 // функция отрисовки координат метки в поле ввода адреса.
 
@@ -219,7 +238,7 @@ var fixAddressValue = function () {
 
 // активация страницы кликом
 
-mainPin.addEventListener('mousedown', function (evt) {
+Nodes.mainPin.addEventListener('mousedown', function (evt) {
     if (typeof evt === 'object') {
       switch (evt.button) {
         case 0:
@@ -234,7 +253,7 @@ mainPin.addEventListener('mousedown', function (evt) {
 
 // активация страницы с клавиатуры
 
-mainPin.addEventListener('keydown', function (evt) {
+Nodes.mainPin.addEventListener('keydown', function (evt) {
     if (evt.key === 'Enter') {
       pageActivation();
     }
@@ -321,8 +340,6 @@ type.addEventListener('change', function () {
     priceInput.setAttribute('placeholder', 'от 10000/рублей');
   }
 });
-
-// валидация врема заезда/выезда
 
 var timeIn = document.querySelector('#timein');
 var timeOut = document.querySelector('#timeout');
