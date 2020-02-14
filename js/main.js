@@ -320,9 +320,41 @@ buttonSubmit.addEventListener('click', validateForm);
 
 // валидация цены и типа жилья
 
+// 1ый способ через switch. НЕ РАБОТАЕТ. ЧТО НЕ ТАК?
+
+/* var priceInput = document.querySelector('#price');
+
+(function (item, i, element) {
+  var type = document.querySelector('#type');
+  type.addEventListener('change', function () {
+    switch (item) {
+      case item[i]:
+        element.setAttribute('min', '0');
+        element.setAttribute('placeholder', 'от 0/рублей');
+        break;
+      case item[i + 1]:
+        element.setAttribute('min', '1000');
+        element.setAttribute('placeholder', 'от 1000/рублей');
+        break;
+      case item[i + 2]:
+        element.setAttribute('min', '5000');
+        element.setAttribute('placeholder', 'от 5000/рублей');
+        break;
+      case item[i + 3]:
+        element.setAttribute('min', '10000');
+        element.setAttribute('placeholder', 'от 10000/рублей');
+        break;
+    }
+  });
+})(TYPES, TYPES[0], priceInput);
+*/
+
+// 2 способ
+
 var type = document.querySelector('#type');
 type.addEventListener('change', function () {
   var priceInput = document.querySelector('#price');
+
   if (type.value === 'bungalo') {
     priceInput.setAttribute('min', '0');
     priceInput.setAttribute('placeholder', 'от 0/рублей');
