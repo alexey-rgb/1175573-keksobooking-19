@@ -23,12 +23,13 @@ var MapWidth = {
   MAX: Math.floor(MAX_MAP_PERCENT_WIDTH - PIN_PERCENT_SIZE),
   MIN: Math.floor(PIN_PERCENT_SIZE)
 };
-var TYPES = ['Дворец', 'Квартира', 'Дом', 'Бунгало'];
+
 var CHECKS = ['12:00', '13:00', '14:00'];
 var Position = {
   Y_MIN: 130,
   Y_MAX: 630,
 };
+var TYPES = ['Дворец', 'Квартира', 'Дом', 'Бунгало'];
 var PHOTO_APARTMENTS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
@@ -318,39 +319,74 @@ var validateForm = function () {
 
 buttonSubmit.addEventListener('click', validateForm);
 
-// валидация цены и типа жилья
+// 3 способ синхронизации двух полей. НЕ РАБОТАЕТ
 
-// 1ый способ через switch. НЕ РАБОТАЕТ. ЧТО НЕ ТАК?
+var roomData = {
+  palace: {
+    type: 'Дворец',
+    price: 10000
+  },
+  house: {
+    type: 'Дом',
+    price: 5000
+  },
+  flat: {
+    type: 'Дом',
+    price: 5000
+  },
+  bungalo: {
+    type: 'Бунгало',
+    price: 0
+  }
+};
 
-/* var priceInput = document.querySelector('#price');
 
-(function (item, i, element) {
+var priceInput = document.querySelector('#price');
+var type = document.querySelector('#type');
+type.addEventListener('change', function (evt) {
+  if (evt.target === type) {
+    priceInput.placeholder = roomData[type.value];
+    priceInput.min = roomData[type.value];
+  }
+});
+
+
+// 2 способ синхронизации двух полей. КАК ИСПРАВИТЬ ЧТО БЫ ЗАРАБОТАЛО?
+/*
+var TYPES = ['Дворец', 'Квартира', 'Дом', 'Бунгало'];
+// priceInput это поле выбора цены за жилье
+var priceInput = document.querySelector('#price');
+(function (element) {
+  // type это поле выбора типа жилья
   var type = document.querySelector('#type');
-  type.addEventListener('change', function () {
-    switch (item) {
-      case item[i]:
-        element.setAttribute('min', '0');
-        element.setAttribute('placeholder', 'от 0/рублей');
-        break;
-      case item[i + 1]:
-        element.setAttribute('min', '1000');
-        element.setAttribute('placeholder', 'от 1000/рублей');
-        break;
-      case item[i + 2]:
-        element.setAttribute('min', '5000');
-        element.setAttribute('placeholder', 'от 5000/рублей');
-        break;
-      case item[i + 3]:
-        element.setAttribute('min', '10000');
-        element.setAttribute('placeholder', 'от 10000/рублей');
-        break;
-    }
+  TYPES.forEach(function (item) {
+    type.addEventListener('change', function () {
+      switch (item) {
+        case TYPES[0]:
+          element.setAttribute('min', '0');
+          element.setAttribute('placeholder', 'от 0/рублей');
+          break;
+        case TYPES[1]:
+          element.setAttribute('min', '1000');
+          element.setAttribute('placeholder', 'от 1000/рублей');
+          break;
+        case TYPES[2]:
+          element.setAttribute('min', '5000');
+          element.setAttribute('placeholder', 'от 5000/рублей');
+          break;
+        case TYPES[3]:
+          element.setAttribute('min', '10000');
+          element.setAttribute('placeholder', 'от 10000/рублей');
+          break;
+      }
+    });
   });
-})(TYPES, TYPES[0], priceInput);
+})(priceInput);
 */
 
-// 2 способ
+// 3 способ, РАБОЧИЙ
 
+/*
 var type = document.querySelector('#type');
 type.addEventListener('change', function () {
   var priceInput = document.querySelector('#price');
@@ -372,6 +408,7 @@ type.addEventListener('change', function () {
     priceInput.setAttribute('placeholder', 'от 10000/рублей');
   }
 });
+*/
 
 var timeIn = document.querySelector('#timein');
 var timeOut = document.querySelector('#timeout');
