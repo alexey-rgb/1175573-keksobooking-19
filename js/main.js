@@ -77,6 +77,25 @@ var pageActivation = function () {
   Nodes.MAP.classList.remove('map--faded');
 };
 
+var roomData = {
+  palace: {
+    type: 'Дворец',
+    price: 10000
+  },
+  house: {
+    type: 'Дом',
+    price: 5000
+  },
+  flat: {
+    type: 'Квартира',
+    price: 1000
+  },
+  bungalo: {
+    type: 'Бунгало',
+    price: 0
+  }
+};
+
 // создаем функции, для получения прозвольных значений свойств объекта(описание объявления)
 
 var getRandomBetween = function (min, max) {
@@ -319,27 +338,7 @@ var validateForm = function () {
 
 buttonSubmit.addEventListener('click', validateForm);
 
-// 3 способ синхронизации двух полей. НЕ РАБОТАЕТ
-
-var roomData = {
-  palace: {
-    type: 'Дворец',
-    price: 10000
-  },
-  house: {
-    type: 'Дом',
-    price: 5000
-  },
-  flat: {
-    type: 'Квартира',
-    price: 1000
-  },
-  bungalo: {
-    type: 'Бунгало',
-    price: 0
-  }
-};
-
+// 1 способ синхронизации двух полей. рабочий
 
 var priceInput = document.querySelector('#price');
 var type = document.querySelector('#type');
