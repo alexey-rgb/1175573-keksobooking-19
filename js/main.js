@@ -331,8 +331,8 @@ var roomData = {
     price: 5000
   },
   flat: {
-    type: 'Дом',
-    price: 5000
+    type: 'Квартира',
+    price: 1000
   },
   bungalo: {
     type: 'Бунгало',
@@ -345,8 +345,8 @@ var priceInput = document.querySelector('#price');
 var type = document.querySelector('#type');
 type.addEventListener('change', function (evt) {
   if (evt.target === type) {
-    priceInput.placeholder = roomData[type.value];
-    priceInput.min = roomData[type.value];
+    priceInput.placeholder = roomData[type.value].price;
+    priceInput.min = roomData[type.value].price;
   }
 });
 
