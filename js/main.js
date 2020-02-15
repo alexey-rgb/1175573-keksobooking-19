@@ -77,24 +77,29 @@ var pageActivation = function () {
   Nodes.MAP.classList.remove('map--faded');
 };
 
-var roomData = {
+var RoomData = {
   palace: {
     type: 'Дворец',
-    price: 10000
+    price: 10000,
+    value: 'palace'
   },
   house: {
     type: 'Дом',
-    price: 5000
+    price: 5000,
+    value: 'house'
   },
   flat: {
     type: 'Квартира',
-    price: 1000
+    price: 1000,
+    value: 'flat'
   },
   bungalo: {
     type: 'Бунгало',
-    price: 0
+    price: 0,
+    value: 'bungalo'
   }
 };
+
 
 // создаем функции, для получения прозвольных значений свойств объекта(описание объявления)
 
@@ -340,48 +345,44 @@ buttonSubmit.addEventListener('click', validateForm);
 
 // 1 способ синхронизации двух полей. рабочий
 
-var priceInput = document.querySelector('#price');
+/*var priceInput = document.querySelector('#price');
 var type = document.querySelector('#type');
 type.addEventListener('change', function (evt) {
   if (evt.target === type) {
     priceInput.placeholder = roomData[type.value].price;
     priceInput.min = roomData[type.value].price;
   }
-});
-
+});*/
 
 // 2 способ синхронизации двух полей. КАК ИСПРАВИТЬ ЧТО БЫ ЗАРАБОТАЛО?
-/*
-var TYPES = ['Дворец', 'Квартира', 'Дом', 'Бунгало'];
+
 // priceInput это поле выбора цены за жилье
 var priceInput = document.querySelector('#price');
 (function (element) {
   // type это поле выбора типа жилья
   var type = document.querySelector('#type');
-  TYPES.forEach(function (item) {
-    type.addEventListener('change', function () {
-      switch (item) {
-        case TYPES[0]:
-          element.setAttribute('min', '0');
-          element.setAttribute('placeholder', 'от 0/рублей');
-          break;
-        case TYPES[1]:
-          element.setAttribute('min', '1000');
-          element.setAttribute('placeholder', 'от 1000/рублей');
-          break;
-        case TYPES[2]:
-          element.setAttribute('min', '5000');
-          element.setAttribute('placeholder', 'от 5000/рублей');
-          break;
-        case TYPES[3]:
-          element.setAttribute('min', '10000');
-          element.setAttribute('placeholder', 'от 10000/рублей');
-          break;
-      }
-    });
+
+  type.addEventListener('change', function () {
+    switch (type.value) {
+      case RoomData.bungalo.value:
+        element.setAttribute('min', '0');
+        element.setAttribute('placeholder', 'от 0/рублей');
+        break;
+      case RoomData.flat.value:
+        element.setAttribute('min', '1000');
+        element.setAttribute('placeholder', 'от 1000/рублей');
+        break;
+      case RoomData.house.value:
+        element.setAttribute('min', '5000');
+        element.setAttribute('placeholder', 'от 5000/рублей');
+        break;
+      case RoomData.palace.value:
+        element.setAttribute('min', '10000');
+        element.setAttribute('placeholder', 'от 10000/рублей');
+        break;
+    }
   });
 })(priceInput);
-*/
 
 // 3 способ, РАБОЧИЙ
 
