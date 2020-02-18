@@ -1,6 +1,6 @@
 'use strict';
 
-// объявляем константы
+// объявляем константы перечисления, массивы
 
 var OBJECT_NUMBER = 8;
 var MIN = 1;
@@ -9,18 +9,22 @@ var Price = {
   MIN: 1000,
   MAX: 10000
 };
-var MAX_MAP_PIXEL_WIDTH = 1200;
-var MAX_MAP_PERCENT_WIDTH = 100;
-var PIN_PIXEL_SIZE = 40;
-var MAIN_PIN_HEIGHT = 44;
-var PIN_PERCENT_SIZE = (PIN_PIXEL_SIZE * MAX_MAP_PERCENT_WIDTH) / MAX_MAP_PIXEL_WIDTH;
-var MainPinPosition = {
-  X: 570,
-  Y: 375
+var MaxMapWidth = {
+  PIXEL: 1200,
+  PERCENT: 100
 };
-var PIN_PSEUDO = 22;
+var Pin = {
+  PIXEL_SIZE: 40,
+  PSEUDO: 22
+};
+var PIN_PERCENT_SIZE = (Pin.PIXEL_SIZE * MaxMapWidth.PERCENT) / MaxMapWidth.PIXEL;
+var MainPin = {
+  POSITION_X: 570,
+  POSITION_Y: 375,
+  HEIGHT: 44
+};
 var MapWidth = {
-  MAX: Math.floor(MAX_MAP_PERCENT_WIDTH - PIN_PERCENT_SIZE),
+  MAX: Math.floor(MaxMapWidth.PERCENT - PIN_PERCENT_SIZE),
   MIN: Math.floor(PIN_PERCENT_SIZE)
 };
 var CHECKS = ['12:00', '13:00', '14:00'];
@@ -28,12 +32,8 @@ var TYPES = ['Дворец', 'Квартира', 'Дом', 'Бунгало'];
 var PHOTO_APARTMENTS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
-
 var PIN_POSITION_FORMULA = (PIN_PERCENT_SIZE * 0.5);
 var APARTMENTS_ADVANTAGES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
-
-// Перечисление
-
 var Position = {
   Y_MIN: 130,
   Y_MAX: 630,
@@ -87,7 +87,7 @@ var RoomData = {
 
 // координаты гланого пина
 
-var mainPinPosition = (MainPinPosition.X + (PIN_PIXEL_SIZE) * 0.5) + ', ' + (MainPinPosition.Y + MAIN_PIN_HEIGHT + PIN_PSEUDO);
+var mainPinPosition = (MainPin.POSITION_X + (Pin.PIXEL_SIZE) * 0.5) + ', ' + (MainPin.POSITION_Y + MainPin.HEIGHT + Pin.PSEUDO);
 
 // переменная содержит метод добавления координат в поле адрес
 
