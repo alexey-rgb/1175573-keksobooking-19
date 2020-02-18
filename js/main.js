@@ -3,8 +3,10 @@
 // объявляем константы перечисления, массивы
 
 var OBJECT_NUMBER = 8;
-var MIN = 1;
-var MAX = 10;
+var Value = {
+  MIN: 1,
+  MAX: 10
+};
 var Price = {
   MIN: 1000,
   MAX: 10000
@@ -39,6 +41,11 @@ var Position = {
   Y_MAX: 630,
 };
 
+var LengthSymbol = {
+  MIN: 30,
+  MAX: 100
+};
+
 // перечисление для доступа к dom-элементам
 
 var Nodes = {
@@ -57,7 +64,11 @@ var Nodes = {
   TIME_IN: document.querySelector('#timein'),
   TIME_OUT: document.querySelector('#timeout'),
   FIELDSET: document.querySelectorAll('.ad-form__element'),
-  POPUP_PHOTO: document.querySelector('.popup__photo')
+  POPUP_PHOTO: document.querySelector('.popup__photo'),
+  POPUP_PHOTOS: document.querySelector('#card').content.querySelector('.popup__photos'),
+  FIELDSET_TIME: document.querySelector('.ad-form__element--time'),
+  TITLE_INPUT: document.querySelector('#title'),
+  CAPACITY: document.querySelector('#capacity')
 };
 
 // Объект для управления полями ввода(синхронизация)
@@ -99,35 +110,35 @@ var fixAddressValue = function () {
   return addressAttribute;
 };
 
+// получаем значение поля с гостями
+
+var inputGuestsChangeNumberHandler = function () {
+  return Nodes.CAPACITY.value;
+};
+
 // синхронизация полей ввода гостей и количества комнат
 
-var findDifference = function () {
+var buttonSubmitClickHandler = function () {
   var roomNumber = document.querySelector('#room_number').value;
-  var capacity = document.querySelector('#capacity');
-  var inputGuestsChangeNumberHandler = function () {
-    return capacity.value;
-  };
-  capacity.addEventListener('change', inputGuestsChangeNumberHandler);
-  if (roomNumber !== capacity.value) {
-    capacity.setCustomValidity('кол-во гостей должны быть равно количеству комнат');
-  } else {
-    capacity.setCustomValidity('');
-  }
+  Nodes.CAPACITY.addEventListener('change', inputGuestsChangeNumberHandler);
+  return (roomNumber !== Nodes.CAPACITY.value) ? Nodes.CAPACITY.setCustomValidity('кол-во гостей должны быть равно количеству комнат')
+    : Nodes.CAPACITY.setCustomValidity('');
 };
 
 // ПОЧЕМУ НЕ ПОЛУЧАЕТСЯ ЭТУ ФУНКЦИЮ В РАЗМЕТКУ ONCHAGE ЗАПИСАТЬ. ХОЧЕТСЯ БЕЗ СОБЫТИЯ НА BUTTON СРАБОТАЛО?
 
-var validateForm = function () {
-  var titleInput = document.querySelector('#title');
-  var MIN_LENGTH = 30;
-  var MAX_LENGTH = 30;
-  titleInput.addEventListener('change', function () {
-    if (titleInput.value.trim().length < MIN_LENGTH && titleInput.value.trim().length < MAX_LENGTH) {
-      titleInput.setCustomValidity('не меньше 30 и не больше 100 символов');
-    } else {
-      titleInput.setCustomValidity('');
-    }
-  });
+var titleInputChangeHandler = function () {
+  if (Nodes.TITLE_INPUT.value.trim().length < LengthSymbol.MIN || Nodes.TITLE_INPUT.value.trim().length > LengthSymbol.MAX) {
+    Nodes.TITLE_INPUT.setCustomValidity('не меньше 30 и не больше 100 символов');
+  } else {
+    Nodes.TITLE_INPUT.setCustomValidity('');
+  }
+};
+
+titleInputChangeHandler();
+
+var buttonSubmitClickHandler2 = function () {
+  Nodes.TITLE_INPUT.addEventListener('change', titleInputChangeHandler);
 };
 
 // функция изменения значения поля цены, в зависимости от типа жилья
@@ -139,17 +150,15 @@ var inputApartChangeTypeHandler = function (evt) {
   }
 };
 
-// функция изменения занчения полей времени заезда/выезда
+var timeSelects = Nodes.FIELDSET_TIME.querySelectorAll('select');
 
-var inputTimeChangeValue = function () {
-  if (Nodes.TIME_IN.value === '12:00') {
+// функции изменения занчения полей времени заезда/выезда
+
+var inputTimeInChangeHandler = function (evt) {
+  if (evt.target === Nodes.TIME_IN) {
     Nodes.TIME_OUT.value = Nodes.TIME_IN.value;
-  }
-  if (Nodes.TIME_IN.value === '13:00') {
-    Nodes.TIME_OUT.value = Nodes.TIME_IN.value;
-  }
-  if (Nodes.TIME_IN.value === '14:00') {
-    Nodes.TIME_OUT.value = Nodes.TIME_IN.value;
+  } else {
+    Nodes.TIME_IN.value = Nodes.TIME_OUT.value;
   }
 };
 
@@ -167,29 +176,26 @@ var pageActivation = function () {
   // показываем карту обявлений
   Nodes.MAP.classList.remove('map--faded');
   // отслеживаем изменения и по необходимости изменяем подсказки в полях
-  Nodes.BUTTON_SUBMIT.addEventListener('click', findDifference);
-  Nodes.BUTTON_SUBMIT.addEventListener('click', validateForm);
+  Nodes.BUTTON_SUBMIT.addEventListener('click', buttonSubmitClickHandler);
+  Nodes.BUTTON_SUBMIT.addEventListener('click', buttonSubmitClickHandler2);
   // 1 способ синхронизации двух полей. рабочий
   Nodes.TYPE.addEventListener('change', inputApartChangeTypeHandler);
-  // изменяется время выезда гостей при изменение времени заезда
-  Nodes.TIME_IN.addEventListener('change', inputTimeChangeValue);
+  // изменяется время выезда гостей при изменение времени заезда и наоборот
+  timeSelects.forEach(function (item) {
+    item.addEventListener('change', inputTimeInChangeHandler);
+  });
   // блокируем возможность редактирования поля с адресом
-
   Nodes.INPUT_ADDRESS.setAttribute('disabled', 'disabled');
 };
-
 // функция активации страницы при клике на главный пин и на ENTER
 
 var mainPinClickHandler = function (evt) {
-  if (typeof evt === 'object') {
-    switch (evt.button) {
-      case 0:
-        break;
-    }
-    pageActivation();
-    fixAddressValue();
-    Nodes.POPUP_PHOTO.hidden = true;
+  if (evt.button === 1 || evt.button === 2) {
+    Nodes.MAIN_PIN.disable();
   }
+  pageActivation();
+  fixAddressValue();
+  Nodes.POPUP_PHOTO.hidden = true;
 };
 
 
@@ -216,27 +222,15 @@ var getRandomItem = function (arr) {
   return arr[getRandomBetween(0, arr.length - 1)];
 };
 
-var randomNumber = function () {
+var getRandomNumber = function () {
   return getRandomBetween(0, 2);
 };
 
 // Получение произвольного массива методом filter(100% рандом)
 
 var getRandomItems = function (arr) {
-  return arr.filter(randomNumber);
+  return arr.filter(getRandomNumber);
 };
-
-// Получение произвольного массива метод2(не 100% - возможны клоны)
-
-/* var getRandomItems2 = function (arr) {
-   var count = getRandomBetween(0, TYPES.length);
-   var items = [];
-   for (var i = 0; i <= count; i++) {
-     var currentItem = arr[i];
-     items.push(currentItem);
-   }
- return items;
-};*/
 
 // функция которая внтури цикла длинною arr.length записывает сгенерированные <img> во фрагмент
 // и на каждом витке добавляет src + class
@@ -245,7 +239,7 @@ var makeImage = function (arr) {
   var count = getRandomBetween(1, PHOTO_APARTMENTS.length);
   var fragment3 = document.createDocumentFragment();
   for (var i = 0; i < count; i++) {
-    var newElement = document.querySelector('#card').content.querySelector('.popup__photos').cloneNode(true);
+    var newElement = Nodes.POPUP_PHOTOS.cloneNode(true);
     newElement.querySelector('.popup__photo').src = arr[i];
     fragment3.appendChild(newElement);
   }
@@ -266,8 +260,8 @@ var mockData = function () {
       'address': '' + positionX + ', ' + positionY,
       'price': getRandomBetween(Price.MIN, Price.MAX) + ' Рублей/ночь',
       'type': getRandomItem(TYPES),
-      'rooms': getRandomBetween(MIN, MAX),
-      'guests': getRandomBetween(MIN, MAX),
+      'rooms': getRandomBetween(Value.MIN, Value.MAX),
+      'guests': getRandomBetween(Value.MIN, Value.MAX),
       'checkin': getRandomItem(CHECKS),
       'checkout': getRandomItem(CHECKS),
       'features': getRandomItems(APARTMENTS_ADVANTAGES),
@@ -281,10 +275,6 @@ var mockData = function () {
   }
   return objects;
 };
-
-// записываем в переменную функцию получения массива с объектами рандомных свойств
-
-var process = mockData();
 
 // клонируем карточку
 
@@ -326,8 +316,9 @@ var getNewPin = function (item) {
   };
   // клонируем
   var pinElement = Nodes.PIN_TEMPLATE.cloneNode(true);
-  pinElement.querySelector('img').src = item.avatar;
-  pinElement.querySelector('img').alt = item.title;
+  var pinImage = pinElement.querySelector('img');
+  pinImage.src = item.avatar;
+  pinImage.alt = item.title;
   pinElement.style.left = (item.location.x) + (-PIN_POSITION_FORMULA) + '%';
   pinElement.style.top = 'calc(' + (item.location.y) + 'px + ' + (-PIN_POSITION_FORMULA * 2) + '%)';
   pinElement.setAttribute('tabindex', '1');
@@ -335,6 +326,10 @@ var getNewPin = function (item) {
   pinElement.addEventListener('click', pinClickHandler);
   return pinElement;
 };
+
+// записываем в переменную функцию получения массива с объектами рандомных свойств
+
+var process = mockData();
 
 // записываем во фрагмент пины
 
@@ -353,82 +348,3 @@ Nodes.FIELDSET.forEach(function (item) {
 });
 
 activatePageWorking();
-
-/* вариант синхронизации полей(гости и комнаты) через добавления атрибута onchange тегу #capacity разметки
-
-function check() {
-  var capacity = document.querySelector('#capacity');
-  var roomNumber = document.querySelector('#room_number').value;
-  if (capacity.value !== roomNumber) {
-    capacity.setCustomValidity('значение должно быть равно ' + roomNumber);
-  } else {
-    capacity.setCustomValidity('');
-  }
-}*/
-
-// делегирование nodes.MAP(общий родитель). Но тут только на 1 случайный пин срабатывает и то не всегда
-
-/*
-nodes.MAP.addEventListener('click', function (evt) {
-  if (evt.target && evt.currentTarget.matches && evt.target.matches('button[type="button"]')) {
-    nodes.MAP.appendChild(mock);
-  }
-});
-*/
-
-// 2 способ синхронизации двух полей.
-
-// priceInput это поле выбора цены за жилье
-/* var priceInput = document.querySelector('#price');
-(function (element) {
-  // type это поле выбора типа жилья
-  var type = document.querySelector('#type');
-
-  type.addEventListener('change', function () {
-    switch (type.value) {
-      case RoomData.bungalo.value:
-        element.setAttribute('min', '0');
-        element.setAttribute('placeholder', 'от 0/рублей');
-        break;
-      case RoomData.flat.value:
-        element.setAttribute('min', '1000');
-        element.setAttribute('placeholder', 'от 1000/рублей');
-        break;
-      case RoomData.house.value:
-        element.setAttribute('min', '5000');
-        element.setAttribute('placeholder', 'от 5000/рублей');
-        break;
-      case RoomData.palace.value:
-        element.setAttribute('min', '10000');
-        element.setAttribute('placeholder', 'от 10000/рублей');
-        break;
-    }
-  });
-})(priceInput);
-*/
-
-// 3 способ синхронизации полей
-
-/*
-var type = document.querySelector('#type');
-type.addEventListener('change', function () {
-  var priceInput = document.querySelector('#price');
-
-  if (type.value === 'bungalo') {
-    priceInput.setAttribute('min', '0');
-    priceInput.setAttribute('placeholder', 'от 0/рублей');
-  }
-  if (type.value === 'flat') {
-    priceInput.setAttribute('min', '1000');
-    priceInput.setAttribute('placeholder', 'от 1000/рублей');
-  }
-  if (type.value === 'house') {
-    priceInput.setAttribute('min', '5000');
-    priceInput.setAttribute('placeholder', 'от 5000/рублей');
-  }
-  if (type.value === 'palace') {
-    priceInput.setAttribute('min', '10000');
-    priceInput.setAttribute('placeholder', 'от 10000/рублей');
-  }
-});
-*/
