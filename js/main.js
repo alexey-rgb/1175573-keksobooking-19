@@ -268,24 +268,40 @@ var mockData = function () {
   return objects;
 };
 
-/*var getButtonCloseHandler = function (element) {
-  return function () {
-    cardElement.remove();
-  };
-};*/
+// Все что ниже не поднимал наверх для удобства проверки. Правильно я уловил все, что ты написал в скайпе?
 
-// клонируем карточку
+/* вытащил это из функции getNewDescription ниже, что бы попробовать вариант с сохранением ссылки на обработчик(стр. 290, 318,319)
+ var cardElement = Nodes.CARD_TEMPLATE.cloneNode(true);
+ */
+
+var getButtonCloseHandler = function (element) {
+  return function (evt) {
+    if (evt.key === 'Escape') {
+      element.remove();
+    }
+    if (evt.button === 0) {
+      element.remove();
+    }
+  };
+};
+
+// СОХРАНЯЕМ ССЫЛКУ НА ОБРАБОТЧИК. Правильно я уловил все, что ты сказал?
+
+// var buttonCloseHandler = getButtonCloseHandler(cardElement);
+
+// клонируем карточку.
 
 var getNewDescription = function (item) {
   var cardElement = Nodes.CARD_TEMPLATE.cloneNode(true);
-  var buttonCloseHandler = function () {
-    cardElement.remove();
-  };
-  var buttonCloseOnEscHandler = function (evt) {
-    if (evt.key === 'Escape') {
-      cardElement.remove();
-    }
-  };
+  // Мой первоначальный вариант
+
+  /* var buttonCloseHandler = function () {
+   cardElement.remove();
+ }; var buttonCloseOnEscHandler = function (evt) {
+   if (evt.key === 'Escape') {
+     cardElement.remove();
+   }
+ };*/
   cardElement.querySelector('.popup__avatar').src = item.avatar;
   cardElement.querySelector('.popup__title').textContent = item.title;
   cardElement.querySelector('.popup__text--address').textContent = item.address;
@@ -298,8 +314,12 @@ var getNewDescription = function (item) {
   cardElement.querySelector('.popup__photos').appendChild(item.photos);
   cardElement.querySelector('.popup__photo').remove();
   cardElement.querySelector('.popup__close').setAttribute('tabindex', '1');
-  cardElement.querySelector('.popup__close').addEventListener('click', buttonCloseHandler);
-  document.addEventListener('keydown', buttonCloseOnEscHandler);
+  // ВОЗВРАЩАЕМ ОБРАБОТЧИК ИЗ ФУНКЦИИ
+  cardElement.querySelector('.popup__close').addEventListener('click', getButtonCloseHandler(cardElement));
+  document.addEventListener('keydown', getButtonCloseHandler(cardElement));
+  //  ИСПОЛЬЗУЕМ В КАЧЕСТВЕ ОБРАБОТЧИКА ССЫЛКУ. Правильно я уловил все, что ты сказал?
+  //   cardElement.querySelector('.popup__close').addEventListener('click', buttonCloseHandler);
+  //   document.addEventListener('keydown', buttonCloseHandler);
   return cardElement;
 };
 
