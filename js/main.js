@@ -59,7 +59,6 @@ var Nodes = {
   MAP: document.querySelector('.map'),
   FORM: document.querySelector('.ad-form'),
   MAIN_PIN: document.querySelector('.map__pin--main'),
-
   // касаящиеся главного пина(маффин).
   INPUT_ADDRESS: document.querySelector('#address'),
   // касается полей форм
@@ -121,7 +120,7 @@ var inputGuestsChangeNumberHandler = function () {
     : Nodes.CAPACITY.setCustomValidity('');
 };
 
-// ПОЧЕМУ НЕ ПОЛУЧАЕТСЯ ЭТУ ФУНКЦИЮ В РАЗМЕТКУ ONCHAGE ЗАПИСАТЬ. ХОЧЕТСЯ БЕЗ СОБЫТИЯ НА BUTTON СРАБОТАЛО?
+// устанавливаем ограничение на длину вводимых символов в поле Заголовок объявления
 
 var titleInputChangeHandler = function () {
   if (Nodes.TITLE_INPUT.value.trim().length < LengthSymbol.MIN || Nodes.TITLE_INPUT.value.trim().length > LengthSymbol.MAX) {
@@ -129,6 +128,7 @@ var titleInputChangeHandler = function () {
   } else {
     Nodes.TITLE_INPUT.setCustomValidity('');
   }
+  return Nodes.INPUT_ADDRESS.removeAttribute('disabled');
 };
 
 // функция изменения значения поля цены, в зависимости от типа жилья
