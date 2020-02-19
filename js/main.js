@@ -46,6 +46,11 @@ var LengthSymbol = {
   MAX: 100
 };
 
+var MouseKey = {
+  RIGHT: 2,
+  MIDDLE: 1
+};
+
 // перечисление для доступа к dom-элементам
 
 var Nodes = {
@@ -68,7 +73,9 @@ var Nodes = {
   POPUP_PHOTOS: document.querySelector('#card').content.querySelector('.popup__photos'),
   FIELDSET_TIME: document.querySelector('.ad-form__element--time'),
   TITLE_INPUT: document.querySelector('#title'),
-  CAPACITY: document.querySelector('#capacity')
+  CAPACITY: document.querySelector('#capacity'),
+  ROOM_NUMBER: document.querySelector('#room_number'),
+  TIME_SELECTS: document.querySelectorAll('select')
 };
 
 // Объект для управления полями ввода(синхронизация)
@@ -100,28 +107,17 @@ var RoomData = {
 
 var mainPinPosition = (MainPin.POSITION_X + (Pin.PIXEL_SIZE) * 0.5) + ', ' + (MainPin.POSITION_Y + MainPin.HEIGHT + Pin.PSEUDO);
 
-// переменная содержит метод добавления координат в поле адрес
-
-var addressAttribute = Nodes.INPUT_ADDRESS.setAttribute('value', mainPinPosition + '');
-
 // функция отрисовки координат метки в поле ввода адреса.
 
 var fixAddressValue = function () {
-  return addressAttribute;
+  Nodes.INPUT_ADDRESS.setAttribute('value', mainPinPosition + '');
 };
 
-// получаем значение поля с гостями
+fixAddressValue();
 
+// получаем значение поля с гостями для синхронизации полей ввода гостей и количества комнат
 var inputGuestsChangeNumberHandler = function () {
-  return Nodes.CAPACITY.value;
-};
-
-// синхронизация полей ввода гостей и количества комнат
-
-var buttonSubmitClickHandler = function () {
-  var roomNumber = document.querySelector('#room_number').value;
-  Nodes.CAPACITY.addEventListener('change', inputGuestsChangeNumberHandler);
-  return (roomNumber !== Nodes.CAPACITY.value) ? Nodes.CAPACITY.setCustomValidity('кол-во гостей должны быть равно количеству комнат')
+  return (Nodes.ROOM_NUMBER.value !== Nodes.CAPACITY.value) ? Nodes.CAPACITY.setCustomValidity('кол-во гостей должны быть равно количеству комнат')
     : Nodes.CAPACITY.setCustomValidity('');
 };
 
@@ -135,12 +131,6 @@ var titleInputChangeHandler = function () {
   }
 };
 
-titleInputChangeHandler();
-
-var buttonSubmitClickHandler2 = function () {
-  Nodes.TITLE_INPUT.addEventListener('change', titleInputChangeHandler);
-};
-
 // функция изменения значения поля цены, в зависимости от типа жилья
 
 var inputApartChangeTypeHandler = function (evt) {
@@ -149,8 +139,6 @@ var inputApartChangeTypeHandler = function (evt) {
     Nodes.PRICE_INPUT.min = RoomData[Nodes.TYPE.value].price;
   }
 };
-
-var timeSelects = Nodes.FIELDSET_TIME.querySelectorAll('select');
 
 // функции изменения занчения полей времени заезда/выезда
 
@@ -176,34 +164,37 @@ var pageActivation = function () {
   // показываем карту обявлений
   Nodes.MAP.classList.remove('map--faded');
   // отслеживаем изменения и по необходимости изменяем подсказки в полях
-  Nodes.BUTTON_SUBMIT.addEventListener('click', buttonSubmitClickHandler);
-  Nodes.BUTTON_SUBMIT.addEventListener('click', buttonSubmitClickHandler2);
+  Nodes.BUTTON_SUBMIT.addEventListener('click', inputGuestsChangeNumberHandler);
+  Nodes.BUTTON_SUBMIT.addEventListener('click', titleInputChangeHandler);
   // 1 способ синхронизации двух полей. рабочий
   Nodes.TYPE.addEventListener('change', inputApartChangeTypeHandler);
   // изменяется время выезда гостей при изменение времени заезда и наоборот
-  timeSelects.forEach(function (item) {
+  Nodes.TIME_SELECTS.forEach(function (item) {
     item.addEventListener('change', inputTimeInChangeHandler);
   });
   // блокируем возможность редактирования поля с адресом
   Nodes.INPUT_ADDRESS.setAttribute('disabled', 'disabled');
+  // присваиваем координаты полю с адресом
+  Nodes.INPUT_ADDRESS.setAttribute('value', mainPinPosition + '');
 };
+
 // функция активации страницы при клике на главный пин и на ENTER
 
 var mainPinClickHandler = function (evt) {
-  if (evt.button === 1 || evt.button === 2) {
+  if (evt.button === MouseKey.MIDDLE || evt.button === MouseKey.RIGHT) {
     Nodes.MAIN_PIN.disable();
   }
   pageActivation();
-  fixAddressValue();
   Nodes.POPUP_PHOTO.hidden = true;
 };
-
 
 var mainPinKeyDownHandler = function (evt) {
   if (evt.key === 'Enter') {
     pageActivation();
   }
 };
+
+// активация страницы
 
 var activatePageWorking = function () {
   // активация страницы кликом
@@ -236,11 +227,12 @@ var getRandomItems = function (arr) {
 // и на каждом витке добавляет src + class
 
 var makeImage = function (arr) {
-  var count = getRandomBetween(1, PHOTO_APARTMENTS.length);
+  var count = getRandomBetween(1, arr.length);
   var fragment3 = document.createDocumentFragment();
   for (var i = 0; i < count; i++) {
     var newElement = Nodes.POPUP_PHOTOS.cloneNode(true);
-    newElement.querySelector('.popup__photo').src = arr[i];
+    //newElement.querySelector('.popup__photo').src = arr[getRandomBetween(i, arr.length - 1)];
+    newElement.querySelector('.popup__photo').src = arr.splice(getRandomBetween(0, arr.length - 1), 1).pop();
     fragment3.appendChild(newElement);
   }
   return fragment3;
@@ -275,6 +267,12 @@ var mockData = function () {
   }
   return objects;
 };
+
+/*var getButtonCloseHandler = function (element) {
+  return function () {
+    cardElement.remove();
+  };
+};*/
 
 // клонируем карточку
 
