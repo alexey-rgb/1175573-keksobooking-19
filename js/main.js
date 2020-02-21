@@ -309,7 +309,7 @@ var getButtonCloseHandler = function (element) {
 var getNewDescription = function (item) {
   var cardElement = Nodes.CARD_TEMPLATE.cloneNode(true);
   //var photos = cardElement.querySelectorAll('.popup__feature');
-  var callFunction = getButtonCloseHandler(cardElement);
+  var call = getButtonCloseHandler(cardElement);
   // Мой первоначальный вариант
 
   /* var buttonCloseHandler = function () {
@@ -332,8 +332,8 @@ var getNewDescription = function (item) {
   cardElement.querySelector('.popup__photo').remove();
   cardElement.querySelector('.popup__close').setAttribute('tabindex', '1');
   // ВОЗВРАЩАЕМ ОБРАБОТЧИК ИЗ ФУНКЦИИ
-  cardElement.querySelector('.popup__close').addEventListener('click', callFunction);
-  document.addEventListener('keydown', callFunction);
+  cardElement.querySelector('.popup__close').addEventListener('click', call);
+  document.addEventListener('keydown', call);
   //  ИСПОЛЬЗУЕМ В КАЧЕСТВЕ ОБРАБОТЧИКА ССЫЛКУ. Правильно я уловил все, что ты сказал?
   //   cardElement.querySelector('.popup__close').addEventListener('click', buttonCloseHandler);
   //   document.addEventListener('keydown', buttonCloseHandler);
