@@ -2,6 +2,7 @@
 
 // объявляем константы перечисления, массивы
 
+var NUMBER_FOR_COUNT = 0.5;
 var OBJECT_NUMBER = 8;
 var Value = {
   MIN: 1,
@@ -25,6 +26,9 @@ var MainPin = {
   POSITION_Y: 375,
   HEIGHT: 44
 };
+// координаты гланого пина
+var MAIN_PIN_POSITION = (MainPin.POSITION_X + (Pin.PIXEL_SIZE) * NUMBER_FOR_COUNT) + ', ' + (MainPin.POSITION_Y + MainPin.HEIGHT + Pin.PSEUDO);
+
 var MapWidth = {
   MAX: Math.floor(MaxMapWidth.PERCENT - PIN_PERCENT_SIZE),
   MIN: Math.floor(PIN_PERCENT_SIZE)
@@ -34,7 +38,7 @@ var TYPES = ['Дворец', 'Квартира', 'Дом', 'Бунгало'];
 var PHOTO_APARTMENTS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
-var PIN_POSITION_FORMULA = (PIN_PERCENT_SIZE * 0.5);
+var PIN_POSITION_FORMULA = (PIN_PERCENT_SIZE * NUMBER_FOR_COUNT);
 var APARTMENTS_ADVANTAGES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var Position = {
   Y_MIN: 130,
@@ -102,33 +106,35 @@ var RoomData = {
   }
 };
 
-// координаты гланого пина
-
-var mainPinPosition = (MainPin.POSITION_X + (Pin.PIXEL_SIZE) * 0.5) + ', ' + (MainPin.POSITION_Y + MainPin.HEIGHT + Pin.PSEUDO);
-
 // функция отрисовки координат метки в поле ввода адреса.
 
 var fixAddressValue = function () {
-  Nodes.INPUT_ADDRESS.setAttribute('value', mainPinPosition + '');
+  Nodes.INPUT_ADDRESS.setAttribute('value', MAIN_PIN_POSITION + '');
 };
 
 fixAddressValue();
 
 // получаем значение поля с гостями для синхронизации полей ввода гостей и количества комнат
+
 var inputGuestsChangeNumberHandler = function () {
-  return (Nodes.ROOM_NUMBER.value !== Nodes.CAPACITY.value) ? Nodes.CAPACITY.setCustomValidity('кол-во гостей должны быть равно количеству комнат')
+  return (Nodes.ROOM_NUMBER.value !== Nodes.CAPACITY.value)
+    ? Nodes.CAPACITY.setCustomValidity('кол-во гостей должны быть равно количеству комнат')
     : Nodes.CAPACITY.setCustomValidity('');
 };
 
 // устанавливаем ограничение на длину вводимых символов в поле Заголовок объявления
 
+var getMessage = function () {
+  return Nodes.TITLE_INPUT.value.trim().length < LengthSymbol.MIN || Nodes.TITLE_INPUT.value.trim().length > LengthSymbol.MAX
+    ? 'не меньше 30 и не больше 100 символов' : '';
+};
+
+/*var getMessage = Nodes.TITLE_INPUT.value.trim().length < LengthSymbol.MIN || Nodes.TITLE_INPUT.value.trim().length > LengthSymbol.MAX
+  ? 'не меньше 30 и не больше 100 символов' : '';*/
+
 var titleInputChangeHandler = function () {
-  if (Nodes.TITLE_INPUT.value.trim().length < LengthSymbol.MIN || Nodes.TITLE_INPUT.value.trim().length > LengthSymbol.MAX) {
-    Nodes.TITLE_INPUT.setCustomValidity('не меньше 30 и не больше 100 символов');
-  } else {
-    Nodes.TITLE_INPUT.setCustomValidity('');
-  }
-  return Nodes.INPUT_ADDRESS.removeAttribute('disabled');
+  Nodes.INPUT_ADDRESS.removeAttribute('disabled');
+  Nodes.TITLE_INPUT.setCustomValidity(getMessage());
 };
 
 // функция изменения значения поля цены, в зависимости от типа жилья
@@ -150,6 +156,12 @@ var inputTimeInChangeHandler = function (evt) {
   }
 };
 
+// функция сравнения значения полей времени заезда и выезда и изменения этих значений
+
+var getSameTime = function (item) {
+  item.addEventListener('change', inputTimeInChangeHandler);
+};
+
 // общая функция активации страницы
 
 var pageActivation = function () {
@@ -169,13 +181,11 @@ var pageActivation = function () {
   // 1 способ синхронизации двух полей. рабочий
   Nodes.TYPE.addEventListener('change', inputApartChangeTypeHandler);
   // изменяется время выезда гостей при изменение времени заезда и наоборот
-  Nodes.TIME_SELECTS.forEach(function (item) {
-    item.addEventListener('change', inputTimeInChangeHandler);
-  });
+  Nodes.TIME_SELECTS.forEach(getSameTime);
   // блокируем возможность редактирования поля с адресом
   Nodes.INPUT_ADDRESS.setAttribute('disabled', 'disabled');
   // присваиваем координаты полю с адресом
-  Nodes.INPUT_ADDRESS.setAttribute('value', mainPinPosition + '');
+  Nodes.INPUT_ADDRESS.setAttribute('value', MAIN_PIN_POSITION + '');
 };
 
 // функция активации страницы при клике на главный пин и на ENTER
@@ -226,28 +236,36 @@ var getRandomItems = function (arr) {
 // функция которая внтури цикла длинною arr.length записывает сгенерированные <img> во фрагмент
 // и на каждом витке добавляет src + class
 
-var makeImage = function (arr) {
-  var count = getRandomBetween(1, arr.length);
+var renderImage = function () {
   var fragment3 = document.createDocumentFragment();
-  for (var i = 0; i < count; i++) {
+  for (var i = 0; i < PHOTO_APARTMENTS.length; i++) {
+    var idx = getRandomBetween(1, PHOTO_APARTMENTS.length - 1);
+    var splicingArray = PHOTO_APARTMENTS.splice(idx, 1).pop();
     var newElement = Nodes.POPUP_PHOTOS.cloneNode(true);
-    //newElement.querySelector('.popup__photo').src = arr[getRandomBetween(i, arr.length - 1)];
-    newElement.querySelector('.popup__photo').src = arr.splice(getRandomBetween(0, arr.length - 1), 1).pop();
+    // newElement.querySelector('.popup__photo').src = arr[getRandomBetween(i, arr.length - 1)];
+    newElement.querySelector('.popup__photo').src = splicingArray;
+    /*console.log(idx);
+    console.log(splicingArray);*/
     fragment3.appendChild(newElement);
   }
+  // фрагмент в который на каждый пин записывается разное кол-во фото и
   return fragment3;
 };
 
 // создаем функцию для генерации 8 объектов
 
-var mockData = function () {
+var mockData = function (number) {
   // создаем пустой массив объектов
   var objects = [];
-  for (var i = 0; i < OBJECT_NUMBER; i++) {
+  for (var i = 0; i < number; i++) {
+    /* var getAvatar = function (idx) {
+      return (idx === 8) ? 'img/avatars/user0' + (idx + 1) + '.png' : 'img/avatars/user' + '0'.padStart('0'.length + 1, idx + 1 + '') + '.png';
+    };*/
     var positionX = getRandomBetween(MapWidth.MIN, MapWidth.MAX);
     var positionY = getRandomBetween(Position.Y_MIN, Position.Y_MAX);
     objects.push({
-      'avatar': 'img/avatars/user0' + (i + 1) + '.png',
+      'avatar': 'img/avatars/user0'.padStart(i + 1) + (i + 1) + '.png',
+      // 'avatar': getAvatar(i),
       'title': 'заголовок объявления',
       'address': '' + positionX + ', ' + positionY,
       'price': getRandomBetween(Price.MIN, Price.MAX) + ' Рублей/ночь',
@@ -258,7 +276,7 @@ var mockData = function () {
       'checkout': getRandomItem(CHECKS),
       'features': getRandomItems(APARTMENTS_ADVANTAGES),
       'description': 'Уютное местечко',
-      'photos': makeImage(PHOTO_APARTMENTS),
+      'photos': renderImage(),
       'location': {
         'x': positionX,
         'y': positionY,
@@ -276,10 +294,7 @@ var mockData = function () {
 
 var getButtonCloseHandler = function (element) {
   return function (evt) {
-    if (evt.key === 'Escape') {
-      element.remove();
-    }
-    if (evt.button === 0) {
+    if (evt.key === 'Escape' || evt.button === 0) {
       element.remove();
     }
   };
@@ -293,6 +308,8 @@ var getButtonCloseHandler = function (element) {
 
 var getNewDescription = function (item) {
   var cardElement = Nodes.CARD_TEMPLATE.cloneNode(true);
+  //var photos = cardElement.querySelectorAll('.popup__feature');
+  var callFunction = getButtonCloseHandler(cardElement);
   // Мой первоначальный вариант
 
   /* var buttonCloseHandler = function () {
@@ -309,14 +326,14 @@ var getNewDescription = function (item) {
   cardElement.querySelector('.popup__type').textContent = item.type;
   cardElement.querySelector('.popup__text--capacity').textContent = item.rooms + ' комнаты для ' + item.guests + ' гостей';
   cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + item.checkin + ', выезд до ' + item.checkout;
-  cardElement.querySelector('.popup__features').textContent = item.features;
+  // cardElement.querySelector('.popup__features').textContent = item.features;
   cardElement.querySelector('.popup__description').textContent = item.description;
   cardElement.querySelector('.popup__photos').appendChild(item.photos);
   cardElement.querySelector('.popup__photo').remove();
   cardElement.querySelector('.popup__close').setAttribute('tabindex', '1');
   // ВОЗВРАЩАЕМ ОБРАБОТЧИК ИЗ ФУНКЦИИ
-  cardElement.querySelector('.popup__close').addEventListener('click', getButtonCloseHandler(cardElement));
-  document.addEventListener('keydown', getButtonCloseHandler(cardElement));
+  cardElement.querySelector('.popup__close').addEventListener('click', callFunction);
+  document.addEventListener('keydown', callFunction);
   //  ИСПОЛЬЗУЕМ В КАЧЕСТВЕ ОБРАБОТЧИКА ССЫЛКУ. Правильно я уловил все, что ты сказал?
   //   cardElement.querySelector('.popup__close').addEventListener('click', buttonCloseHandler);
   //   document.addEventListener('keydown', buttonCloseHandler);
@@ -347,7 +364,7 @@ var getNewPin = function (item) {
 
 // записываем в переменную функцию получения массива с объектами рандомных свойств
 
-var process = mockData();
+var process = mockData(OBJECT_NUMBER);
 
 // записываем во фрагмент пины
 
