@@ -73,6 +73,7 @@ var Nodes = {
   TIME_OUT: document.querySelector('#timeout'),
   FIELDSET: document.querySelectorAll('.ad-form__element'),
   POPUP_PHOTO: document.querySelector('.popup__photo'),
+  FEATURES: document.querySelector('#card').content.querySelector('.popup__features'),
   POPUP_PHOTOS: document.querySelector('#card').content.querySelector('.popup__photos'),
   FIELDSET_TIME: document.querySelector('.ad-form__element--time'),
   TITLE_INPUT: document.querySelector('#title'),
@@ -129,11 +130,13 @@ var getMessage = function () {
     ? 'не меньше 30 и не больше 100 символов' : '';
 };
 
-/*var getMessage = Nodes.TITLE_INPUT.value.trim().length < LengthSymbol.MIN || Nodes.TITLE_INPUT.value.trim().length > LengthSymbol.MAX
+// ВОТ ЭТО НЕ РАБОТАЕТ, подскажи почему?
+
+/* var message = Nodes.TITLE_INPUT.value.trim().length < LengthSymbol.MIN || Nodes.TITLE_INPUT.value.trim().length > LengthSymbol.MAX
   ? 'не меньше 30 и не больше 100 символов' : '';*/
 
 var titleInputChangeHandler = function () {
-  Nodes.INPUT_ADDRESS.removeAttribute('disabled');
+  // Nodes.INPUT_ADDRESS.removeAttribute('disabled');
   Nodes.TITLE_INPUT.setCustomValidity(getMessage());
 };
 
@@ -165,6 +168,8 @@ var getSameTime = function (item) {
 // общая функция активации страницы
 
 var pageActivation = function () {
+  // присваиваем переменной функцию получения массива с объектами рандомных свойств
+  var ads = mockData(OBJECT_NUMBER);
   // активируем форму
   Nodes.FORM.classList.remove('ad-form--disabled');
   // активируем поля ввода
@@ -172,7 +177,7 @@ var pageActivation = function () {
     item.removeAttribute('disabled');
   });
   // выводим фрагмент c метками похожих объявлений в dom
-  Nodes.MAP.appendChild(fillFragment(process));
+  Nodes.MAP.appendChild(fillFragment(ads));
   // показываем карту обявлений
   Nodes.MAP.classList.remove('map--faded');
   // отслеживаем изменения и по необходимости изменяем подсказки в полях
@@ -182,8 +187,6 @@ var pageActivation = function () {
   Nodes.TYPE.addEventListener('change', inputApartChangeTypeHandler);
   // изменяется время выезда гостей при изменение времени заезда и наоборот
   Nodes.TIME_SELECTS.forEach(getSameTime);
-  // блокируем возможность редактирования поля с адресом
-  Nodes.INPUT_ADDRESS.setAttribute('disabled', 'disabled');
   // присваиваем координаты полю с адресом
   Nodes.INPUT_ADDRESS.setAttribute('value', MAIN_PIN_POSITION + '');
 };
@@ -227,29 +230,42 @@ var getRandomNumber = function () {
   return getRandomBetween(0, 2);
 };
 
+// функции добавления массива во фрагмент (фичи и фото)
+
+var renderCard = function (arr) {
+  var fragment3 = document.createDocumentFragment();
+  arr.forEach(function (item) {
+    var newElement = Nodes.POPUP_PHOTOS.cloneNode(true);
+    newElement.querySelector('.popup__photo').src = item;
+    fragment3.appendChild(newElement);
+  });
+  return fragment3;
+};
+
+var renderFeatures = function (arr) {
+  var fragment4 = document.createDocumentFragment();
+  arr.forEach(function (item) {
+    var newElement = Nodes.FEATURES.cloneNode(true).appendChild(item);
+    fragment4.appendChild(newElement);
+  });
+  return fragment4;
+};
+
 // Получение произвольного массива методом filter(100% рандом)
 
 var getRandomItems = function (arr) {
   return arr.filter(getRandomNumber);
 };
 
-// функция которая внтури цикла длинною arr.length записывает сгенерированные <img> во фрагмент
-// и на каждом витке добавляет src + class
+// Получение произвольного массива методом filter c проверкой
 
-var renderImage = function () {
-  var fragment3 = document.createDocumentFragment();
-  for (var i = 0; i < PHOTO_APARTMENTS.length; i++) {
-    var idx = getRandomBetween(1, PHOTO_APARTMENTS.length - 1);
-    var splicingArray = PHOTO_APARTMENTS.splice(idx, 1).pop();
-    var newElement = Nodes.POPUP_PHOTOS.cloneNode(true);
-    // newElement.querySelector('.popup__photo').src = arr[getRandomBetween(i, arr.length - 1)];
-    newElement.querySelector('.popup__photo').src = splicingArray;
-    /*console.log(idx);
-    console.log(splicingArray);*/
-    fragment3.appendChild(newElement);
+var getRandomItems2 = function (arr) {
+  var randomArr = arr.filter(getRandomNumber);
+  if (randomArr.length === 0) {
+    return randomArr.push(arr[getRandomBetween(0, arr.length - 1)]);
+  } else {
+    return arr.filter(getRandomNumber);
   }
-  // фрагмент в который на каждый пин записывается разное кол-во фото и
-  return fragment3;
 };
 
 // создаем функцию для генерации 8 объектов
@@ -258,14 +274,13 @@ var mockData = function (number) {
   // создаем пустой массив объектов
   var objects = [];
   for (var i = 0; i < number; i++) {
-    /* var getAvatar = function (idx) {
-      return (idx === 8) ? 'img/avatars/user0' + (idx + 1) + '.png' : 'img/avatars/user' + '0'.padStart('0'.length + 1, idx + 1 + '') + '.png';
-    };*/
     var positionX = getRandomBetween(MapWidth.MIN, MapWidth.MAX);
     var positionY = getRandomBetween(Position.Y_MIN, Position.Y_MAX);
     objects.push({
-      'avatar': 'img/avatars/user0'.padStart(i + 1) + (i + 1) + '.png',
-      // 'avatar': getAvatar(i),
+      'avatar': 'img/avatars/user0' + (i + 1) + '.png',
+      /* var getAvatar = function (idx) {
+      return (idx === 8) ? 'img/avatars/user0' + (idx + 1) + '.png' : 'img/avatars/user' + '0'.padStart('0'.length + 1, idx + 1 + '') + '.png';
+    };*/
       'title': 'заголовок объявления',
       'address': '' + positionX + ', ' + positionY,
       'price': getRandomBetween(Price.MIN, Price.MAX) + ' Рублей/ночь',
@@ -276,7 +291,8 @@ var mockData = function (number) {
       'checkout': getRandomItem(CHECKS),
       'features': getRandomItems(APARTMENTS_ADVANTAGES),
       'description': 'Уютное местечко',
-      'photos': renderImage(),
+      'photos': renderCard(getRandomItems2(PHOTO_APARTMENTS)),
+      // 'photos': renderCard(PHOTO_APARTMENTS.splice(getRandomBetween(0, PHOTO_APARTMENTS.length - 1))),
       'location': {
         'x': positionX,
         'y': positionY,
@@ -286,11 +302,7 @@ var mockData = function (number) {
   return objects;
 };
 
-// Все что ниже не поднимал наверх для удобства проверки. Правильно я уловил все, что ты написал в скайпе?
-
-/* вытащил это из функции getNewDescription ниже, что бы попробовать вариант с сохранением ссылки на обработчик(стр. 290, 318,319)
- var cardElement = Nodes.CARD_TEMPLATE.cloneNode(true);
- */
+// функция показывает как можно закрыть карточку с описанием пина
 
 var getButtonCloseHandler = function (element) {
   return function (evt) {
@@ -300,25 +312,16 @@ var getButtonCloseHandler = function (element) {
   };
 };
 
-// СОХРАНЯЕМ ССЫЛКУ НА ОБРАБОТЧИК. Правильно я уловил все, что ты сказал?
-
-// var buttonCloseHandler = getButtonCloseHandler(cardElement);
-
 // клонируем карточку.
 
 var getNewDescription = function (item) {
   var cardElement = Nodes.CARD_TEMPLATE.cloneNode(true);
-  //var photos = cardElement.querySelectorAll('.popup__feature');
+  // коллекция фич
+  var featuresCollection = cardElement.querySelectorAll('.popup__feature');
+  var featuresArray = Array.from(featuresCollection);
+  // записываем в переменную по методу dry
   var call = getButtonCloseHandler(cardElement);
-  // Мой первоначальный вариант
-
-  /* var buttonCloseHandler = function () {
-   cardElement.remove();
- }; var buttonCloseOnEscHandler = function (evt) {
-   if (evt.key === 'Escape') {
-     cardElement.remove();
-   }
- };*/
+  // наполняем шаблон карточки
   cardElement.querySelector('.popup__avatar').src = item.avatar;
   cardElement.querySelector('.popup__title').textContent = item.title;
   cardElement.querySelector('.popup__text--address').textContent = item.address;
@@ -326,7 +329,7 @@ var getNewDescription = function (item) {
   cardElement.querySelector('.popup__type').textContent = item.type;
   cardElement.querySelector('.popup__text--capacity').textContent = item.rooms + ' комнаты для ' + item.guests + ' гостей';
   cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + item.checkin + ', выезд до ' + item.checkout;
-  // cardElement.querySelector('.popup__features').textContent = item.features;
+  cardElement.querySelector('.popup__features').appendChild(renderFeatures(getRandomItems(featuresArray)));
   cardElement.querySelector('.popup__description').textContent = item.description;
   cardElement.querySelector('.popup__photos').appendChild(item.photos);
   cardElement.querySelector('.popup__photo').remove();
@@ -334,15 +337,12 @@ var getNewDescription = function (item) {
   // ВОЗВРАЩАЕМ ОБРАБОТЧИК ИЗ ФУНКЦИИ
   cardElement.querySelector('.popup__close').addEventListener('click', call);
   document.addEventListener('keydown', call);
-  //  ИСПОЛЬЗУЕМ В КАЧЕСТВЕ ОБРАБОТЧИКА ССЫЛКУ. Правильно я уловил все, что ты сказал?
-  //   cardElement.querySelector('.popup__close').addEventListener('click', buttonCloseHandler);
-  //   document.addEventListener('keydown', buttonCloseHandler);
   return cardElement;
 };
 
 // функция создания пина
 
-var getNewPin = function (item) {
+var renderPin = function (item) {
   // создаем клон карточки используя произвольный объект для заполнения шаблона
   var mock = getNewDescription(item);
   var pinClickHandler = function () {
@@ -362,16 +362,12 @@ var getNewPin = function (item) {
   return pinElement;
 };
 
-// записываем в переменную функцию получения массива с объектами рандомных свойств
-
-var process = mockData(OBJECT_NUMBER);
-
 // записываем во фрагмент пины
 
-var fillFragment = function () {
+var fillFragment = function (mockArr) {
   var fragment1 = document.createDocumentFragment();
-  process.forEach(function (item) {
-    fragment1.appendChild(getNewPin(item));
+  mockArr.forEach(function (item) {
+    fragment1.appendChild(renderPin(item));
   });
   return fragment1;
 };
