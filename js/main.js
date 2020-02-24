@@ -232,7 +232,7 @@ var getRandomNumber = function () {
 
 // функции добавления массива во фрагмент (фичи и фото)
 
-var renderCard = function (arr) {
+var renderPhotos = function (arr) {
   var fragment3 = document.createDocumentFragment();
   arr.forEach(function (item) {
     var newElement = Nodes.POPUP_PHOTOS.cloneNode(true);
@@ -291,8 +291,7 @@ var mockData = function (number) {
       'checkout': getRandomItem(CHECKS),
       'features': getRandomItems(APARTMENTS_ADVANTAGES),
       'description': 'Уютное местечко',
-      'photos': renderCard(getRandomItems2(PHOTO_APARTMENTS)),
-      // 'photos': renderCard(PHOTO_APARTMENTS.splice(getRandomBetween(0, PHOTO_APARTMENTS.length - 1))),
+      'photos': getRandomItems2(PHOTO_APARTMENTS),
       'location': {
         'x': positionX,
         'y': positionY,
@@ -314,7 +313,7 @@ var getButtonCloseHandler = function (element) {
 
 // клонируем карточку.
 
-var getNewDescription = function (item) {
+var renderCard = function (item) {
   var cardElement = Nodes.CARD_TEMPLATE.cloneNode(true);
   // коллекция фич
   var featuresCollection = cardElement.querySelectorAll('.popup__feature');
@@ -331,7 +330,7 @@ var getNewDescription = function (item) {
   cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + item.checkin + ', выезд до ' + item.checkout;
   cardElement.querySelector('.popup__features').appendChild(renderFeatures(getRandomItems(featuresArray)));
   cardElement.querySelector('.popup__description').textContent = item.description;
-  cardElement.querySelector('.popup__photos').appendChild(item.photos);
+  cardElement.querySelector('.popup__photos').appendChild(renderPhotos(item.photos));
   cardElement.querySelector('.popup__photo').remove();
   cardElement.querySelector('.popup__close').setAttribute('tabindex', '1');
   // ВОЗВРАЩАЕМ ОБРАБОТЧИК ИЗ ФУНКЦИИ
@@ -344,7 +343,7 @@ var getNewDescription = function (item) {
 
 var renderPin = function (item) {
   // создаем клон карточки используя произвольный объект для заполнения шаблона
-  var mock = getNewDescription(item);
+  var mock = renderCard(item);
   var pinClickHandler = function () {
     // выводим мок в dom
     Nodes.MAP.appendChild(mock);
