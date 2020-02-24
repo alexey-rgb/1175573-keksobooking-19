@@ -261,11 +261,8 @@ var getRandomItems = function (arr) {
 
 var getRandomItems2 = function (arr) {
   var randomArr = arr.filter(getRandomNumber);
-  if (randomArr.length === 0) {
-    return randomArr.push(arr[getRandomBetween(0, arr.length - 1)]);
-  } else {
-    return arr.filter(getRandomNumber);
-  }
+  return (randomArr.length === 0) ? randomArr.push(arr[getRandomBetween(0, arr.length - 1)])
+    : randomArr;
 };
 
 // создаем функцию для генерации 8 объектов
