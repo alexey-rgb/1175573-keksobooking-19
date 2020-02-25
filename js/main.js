@@ -38,8 +38,11 @@ var TYPES = ['Дворец', 'Квартира', 'Дом', 'Бунгало'];
 var PHOTO_APARTMENTS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+// ФИЧИ
+var FEATURES = ['popup__feature popup__feature--wifi', 'popup__feature popup__feature--dishwasher',
+  'popup__feature popup__feature--parking', 'popup__feature popup__feature--washer',
+  'popup__feature popup__feature--elevator', 'popup__feature popup__feature--conditioner'];
 var PIN_POSITION_FORMULA = (PIN_PERCENT_SIZE * NUMBER_FOR_COUNT);
-var APARTMENTS_ADVANTAGES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var Position = {
   Y_MIN: 130,
   Y_MAX: 630,
@@ -107,37 +110,38 @@ var RoomData = {
   }
 };
 
-// функция отрисовки координат метки в поле ввода адреса.
+// блокируем поля ввода
 
-var fixAddressValue = function () {
-  Nodes.INPUT_ADDRESS.setAttribute('value', MAIN_PIN_POSITION + '');
+var disableFieldset = function (item) {
+  item.setAttribute('disabled', 'disabled');
 };
 
-fixAddressValue();
+// функция отрисовки координат метки в поле ввода адреса и блокировки полей ввода до активации страницы
+
+var fixAddressValueAndBlockFieldset = function () {
+  Nodes.INPUT_ADDRESS.setAttribute('value', MAIN_PIN_POSITION + '');
+  Nodes.FIELDSET.forEach(disableFieldset);
+};
 
 // получаем значение поля с гостями для синхронизации полей ввода гостей и количества комнат
 
 var inputGuestsChangeNumberHandler = function () {
-  return (Nodes.ROOM_NUMBER.value !== Nodes.CAPACITY.value)
-    ? Nodes.CAPACITY.setCustomValidity('кол-во гостей должны быть равно количеству комнат')
-    : Nodes.CAPACITY.setCustomValidity('');
+  var getMessage1 = function () {
+    return Nodes.ROOM_NUMBER.value !== Nodes.CAPACITY.value
+      ? ('кол-во гостей должны быть равно количеству комнат')
+      : ('');
+  };
+  Nodes.CAPACITY.setCustomValidity(getMessage1());
 };
 
 // устанавливаем ограничение на длину вводимых символов в поле Заголовок объявления
 
-var getMessage = function () {
-  return Nodes.TITLE_INPUT.value.trim().length < LengthSymbol.MIN || Nodes.TITLE_INPUT.value.trim().length > LengthSymbol.MAX
-    ? 'не меньше 30 и не больше 100 символов' : '';
-};
-
-// ВОТ ЭТО НЕ РАБОТАЕТ, подскажи почему?
-
-/* var message = Nodes.TITLE_INPUT.value.trim().length < LengthSymbol.MIN || Nodes.TITLE_INPUT.value.trim().length > LengthSymbol.MAX
-  ? 'не меньше 30 и не больше 100 символов' : '';*/
-
 var titleInputChangeHandler = function () {
-  // Nodes.INPUT_ADDRESS.removeAttribute('disabled');
-  Nodes.TITLE_INPUT.setCustomValidity(getMessage());
+  var getMessage2 = function () {
+    return Nodes.TITLE_INPUT.value.trim().length < LengthSymbol.MIN || Nodes.TITLE_INPUT.value.trim().length > LengthSymbol.MAX
+      ? 'не меньше 30 и не больше 100 символов' : '';
+  };
+  Nodes.TITLE_INPUT.setCustomValidity(getMessage2());
 };
 
 // функция изменения значения поля цены, в зависимости от типа жилья
@@ -177,7 +181,7 @@ var pageActivation = function () {
     item.removeAttribute('disabled');
   });
   // выводим фрагмент c метками похожих объявлений в dom
-  Nodes.MAP.appendChild(fillFragment(ads));
+  Nodes.MAP.appendChild(makeFragment(ads));
   // показываем карту обявлений
   Nodes.MAP.classList.remove('map--faded');
   // отслеживаем изменения и по необходимости изменяем подсказки в полях
@@ -230,7 +234,7 @@ var getRandomNumber = function () {
   return getRandomBetween(0, 2);
 };
 
-// функции добавления массива во фрагмент (фичи и фото)
+// функции добавления массива во фрагмент (фото)
 
 var renderPhotos = function (arr) {
   var fragment3 = document.createDocumentFragment();
@@ -242,27 +246,34 @@ var renderPhotos = function (arr) {
   return fragment3;
 };
 
-var renderFeatures = function (arr) {
-  var fragment4 = document.createDocumentFragment();
-  arr.forEach(function (item) {
-    var newElement = Nodes.FEATURES.cloneNode(true).appendChild(item);
-    fragment4.appendChild(newElement);
-  });
-  return fragment4;
-};
-
 // Получение произвольного массива методом filter(100% рандом)
 
 var getRandomItems = function (arr) {
   return arr.filter(getRandomNumber);
 };
 
+// добавление массива во фрагмент (фичи)
+
+var renderFeatures = function (arr) {
+  var fragment5 = document.createDocumentFragment();
+  arr.forEach(function (item, i) {
+    var newList = Nodes.FEATURES.cloneNode(true);
+    var featuresCollection = newList.querySelectorAll('.popup__feature');
+    var newElement = featuresCollection[i];
+    newElement.className = item;
+    fragment5.appendChild(newElement);
+  });
+  return fragment5;
+};
+
 // Получение произвольного массива методом filter c проверкой
 
 var getRandomItems2 = function (arr) {
   var randomArr = arr.filter(getRandomNumber);
-  return (randomArr.length === 0) ? randomArr.push(arr[getRandomBetween(0, arr.length - 1)])
-    : randomArr;
+  if (randomArr.length === 0) {
+    randomArr.push(arr[getRandomBetween(0, arr.length - 1)]);
+  }
+  return randomArr;
 };
 
 // создаем функцию для генерации 8 объектов
@@ -274,10 +285,7 @@ var mockData = function (number) {
     var positionX = getRandomBetween(MapWidth.MIN, MapWidth.MAX);
     var positionY = getRandomBetween(Position.Y_MIN, Position.Y_MAX);
     objects.push({
-      'avatar': 'img/avatars/user0' + (i + 1) + '.png',
-      /* var getAvatar = function (idx) {
-      return (idx === 8) ? 'img/avatars/user0' + (idx + 1) + '.png' : 'img/avatars/user' + '0'.padStart('0'.length + 1, idx + 1 + '') + '.png';
-    };*/
+      'avatar': 'img/avatars/user' + ('' + (i + 1)).padStart(2, '0') + '.png',
       'title': 'заголовок объявления',
       'address': '' + positionX + ', ' + positionY,
       'price': getRandomBetween(Price.MIN, Price.MAX) + ' Рублей/ночь',
@@ -286,7 +294,7 @@ var mockData = function (number) {
       'guests': getRandomBetween(Value.MIN, Value.MAX),
       'checkin': getRandomItem(CHECKS),
       'checkout': getRandomItem(CHECKS),
-      'features': getRandomItems(APARTMENTS_ADVANTAGES),
+      'features': getRandomItems(FEATURES),
       'description': 'Уютное местечко',
       'photos': getRandomItems2(PHOTO_APARTMENTS),
       'location': {
@@ -312,9 +320,10 @@ var getButtonCloseHandler = function (element) {
 
 var renderCard = function (item) {
   var cardElement = Nodes.CARD_TEMPLATE.cloneNode(true);
-  // коллекция фич
   var featuresCollection = cardElement.querySelectorAll('.popup__feature');
-  var featuresArray = Array.from(featuresCollection);
+  featuresCollection.forEach(function (feature) {
+    cardElement.querySelector('.popup__features').removeChild(feature);
+  });
   // записываем в переменную по методу dry
   var call = getButtonCloseHandler(cardElement);
   // наполняем шаблон карточки
@@ -325,7 +334,7 @@ var renderCard = function (item) {
   cardElement.querySelector('.popup__type').textContent = item.type;
   cardElement.querySelector('.popup__text--capacity').textContent = item.rooms + ' комнаты для ' + item.guests + ' гостей';
   cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + item.checkin + ', выезд до ' + item.checkout;
-  cardElement.querySelector('.popup__features').appendChild(renderFeatures(getRandomItems(featuresArray)));
+  cardElement.querySelector('.popup__features').appendChild(renderFeatures(item.features));
   cardElement.querySelector('.popup__description').textContent = item.description;
   cardElement.querySelector('.popup__photos').appendChild(renderPhotos(item.photos));
   cardElement.querySelector('.popup__photo').remove();
@@ -345,6 +354,11 @@ var renderPin = function (item) {
     // выводим мок в dom
     Nodes.MAP.appendChild(mock);
   };
+  /* Nodes.MAP.addEventListener('click', function (evt) {
+    if (evt.target && evt.currentTarget.matches && evt.target.matches('button[type="button"]')) {
+      pinClickHandler();
+    }
+  });*/
   // клонируем
   var pinElement = Nodes.PIN_TEMPLATE.cloneNode(true);
   var pinImage = pinElement.querySelector('img');
@@ -360,7 +374,7 @@ var renderPin = function (item) {
 
 // записываем во фрагмент пины
 
-var fillFragment = function (mockArr) {
+var makeFragment = function (mockArr) {
   var fragment1 = document.createDocumentFragment();
   mockArr.forEach(function (item) {
     fragment1.appendChild(renderPin(item));
@@ -368,10 +382,6 @@ var fillFragment = function (mockArr) {
   return fragment1;
 };
 
-// блокируем поля ввода
-
-Nodes.FIELDSET.forEach(function (item) {
-  item.setAttribute('disabled', 'disabled');
-});
-
 activatePageWorking();
+
+fixAddressValueAndBlockFieldset();
