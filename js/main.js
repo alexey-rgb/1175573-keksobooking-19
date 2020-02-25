@@ -354,21 +354,24 @@ var renderPin = function (item) {
     // выводим мок в dom
     Nodes.MAP.appendChild(mock);
   };
-  /* Nodes.MAP.addEventListener('click', function (evt) {
-    if (evt.target && evt.currentTarget.matches && evt.target.matches('button[type="button"]')) {
-      pinClickHandler();
-    }
-  });*/
   // клонируем
   var pinElement = Nodes.PIN_TEMPLATE.cloneNode(true);
+  // ДЕЛЕГИРОВАНИЕ
   var pinImage = pinElement.querySelector('img');
+  pinImage.className = 'target-img';
+  var wrapperCLickHandler = function (evt) {
+    if (evt.target.matches('.target-img')) {
+      pinClickHandler();
+    }
+  };
+  Nodes.MAP.addEventListener('click', wrapperCLickHandler);
   pinImage.src = item.avatar;
   pinImage.alt = item.title;
   pinElement.style.left = (item.location.x) + (-PIN_POSITION_FORMULA) + '%';
   pinElement.style.top = 'calc(' + (item.location.y) + 'px + ' + (-PIN_POSITION_FORMULA * 2) + '%)';
   pinElement.setAttribute('tabindex', '1');
   // при клике на пин показываем карточку с описанием
-  pinElement.addEventListener('click', pinClickHandler);
+ //  pinElement.addEventListener('click', pinClickHandler);
   return pinElement;
 };
 
