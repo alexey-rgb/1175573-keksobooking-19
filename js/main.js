@@ -85,9 +85,12 @@ var Nodes = {
   TIME_SELECTS: document.querySelectorAll('select')
 };
 
+// находим первый попавшийся
+var FEATURE = Nodes.FEATURES.querySelector('.popup__feature');
+
 // Объект для управления полями ввода(синхронизация)
 
-var RoomData = {
+var roomData = {
   palace: {
     type: 'Дворец',
     price: 10000,
@@ -148,8 +151,8 @@ var titleInputChangeHandler = function () {
 
 var inputApartChangeTypeHandler = function (evt) {
   if (evt.target === Nodes.TYPE) {
-    Nodes.PRICE_INPUT.placeholder = RoomData[Nodes.TYPE.value].price;
-    Nodes.PRICE_INPUT.min = RoomData[Nodes.TYPE.value].price;
+    Nodes.PRICE_INPUT.placeholder = roomData[Nodes.TYPE.value].price;
+    Nodes.PRICE_INPUT.min = roomData[Nodes.TYPE.value].price;
   }
 };
 
@@ -165,13 +168,13 @@ var inputTimeInChangeHandler = function (evt) {
 
 // функция сравнения значения полей времени заезда и выезда и изменения этих значений
 
-var getSameTime = function (item) {
+var setTimeChangeHandler = function (item) {
   item.addEventListener('change', inputTimeInChangeHandler);
 };
 
 // общая функция активации страницы
 
-var pageActivation = function () {
+var startPageActivation = function () {
   // присваиваем переменной функцию получения массива с объектами рандомных свойств
   var ads = mockData(OBJECT_NUMBER);
   // активируем форму
@@ -190,7 +193,7 @@ var pageActivation = function () {
   // 1 способ синхронизации двух полей. рабочий
   Nodes.TYPE.addEventListener('change', inputApartChangeTypeHandler);
   // изменяется время выезда гостей при изменение времени заезда и наоборот
-  Nodes.TIME_SELECTS.forEach(getSameTime);
+  Nodes.TIME_SELECTS.forEach(setTimeChangeHandler);
   // присваиваем координаты полю с адресом
   Nodes.INPUT_ADDRESS.setAttribute('value', MAIN_PIN_POSITION + '');
 };
@@ -201,13 +204,13 @@ var mainPinClickHandler = function (evt) {
   if (evt.button === MouseKey.MIDDLE || evt.button === MouseKey.RIGHT) {
     Nodes.MAIN_PIN.disable();
   }
-  pageActivation();
+  startPageActivation();
   Nodes.POPUP_PHOTO.hidden = true;
 };
 
 var mainPinKeyDownHandler = function (evt) {
   if (evt.key === 'Enter') {
-    pageActivation();
+    startPageActivation();
   }
 };
 
@@ -246,21 +249,16 @@ var renderPhotos = function (arr) {
   return fragment3;
 };
 
-// Получение произвольного массива методом filter(100% рандом)
-
-var getRandomItems = function (arr) {
-  return arr.filter(getRandomNumber);
-};
-
 // добавление массива во фрагмент (фичи)
 
 var renderFeatures = function (arr) {
+  // контейнер с фичами
   var fragment5 = document.createDocumentFragment();
-  arr.forEach(function (item, i) {
-    var newList = Nodes.FEATURES.cloneNode(true);
-    var featuresCollection = newList.querySelectorAll('.popup__feature');
-    var newElement = featuresCollection[i];
+  arr.forEach(function (item) {
+    var newElement = FEATURE.cloneNode(true);
+    // добывляем класс из рандомного массива названий фич
     newElement.className = item;
+    // записываем во фрагмент
     fragment5.appendChild(newElement);
   });
   return fragment5;
@@ -294,7 +292,7 @@ var mockData = function (number) {
       'guests': getRandomBetween(Value.MIN, Value.MAX),
       'checkin': getRandomItem(CHECKS),
       'checkout': getRandomItem(CHECKS),
-      'features': getRandomItems(FEATURES),
+      'features': getRandomItems2(FEATURES),
       'description': 'Уютное местечко',
       'photos': getRandomItems2(PHOTO_APARTMENTS),
       'location': {
@@ -348,30 +346,33 @@ var renderCard = function (item) {
 // функция создания пина
 
 var renderPin = function (item) {
-  // создаем клон карточки используя произвольный объект для заполнения шаблона
+  // присваиваем переменной создание клона карточки используя произвольный объект для заполнения шаблона
   var mock = renderCard(item);
   var pinClickHandler = function () {
-    // выводим мок в dom
+    // выводим карточку с описанием метки в dom
+    if (Nodes.MAP.querySelectorAll('.map__card').length > 0) {
+      Nodes.MAP.querySelector('.map__card').remove();
+    }
     Nodes.MAP.appendChild(mock);
   };
   // клонируем
   var pinElement = Nodes.PIN_TEMPLATE.cloneNode(true);
-  // ДЕЛЕГИРОВАНИЕ
   var pinImage = pinElement.querySelector('img');
+  /* // ДЕЛЕГИРОВАНИЕ
   pinImage.className = 'target-img';
   var wrapperCLickHandler = function (evt) {
     if (evt.target.matches('.target-img')) {
       pinClickHandler();
     }
   };
-  Nodes.MAP.addEventListener('click', wrapperCLickHandler);
+  Nodes.MAP.addEventListener('click', wrapperCLickHandler);*/
   pinImage.src = item.avatar;
   pinImage.alt = item.title;
   pinElement.style.left = (item.location.x) + (-PIN_POSITION_FORMULA) + '%';
   pinElement.style.top = 'calc(' + (item.location.y) + 'px + ' + (-PIN_POSITION_FORMULA * 2) + '%)';
   pinElement.setAttribute('tabindex', '1');
   // при клике на пин показываем карточку с описанием
- //  pinElement.addEventListener('click', pinClickHandler);
+  pinElement.addEventListener('click', pinClickHandler);
   return pinElement;
 };
 
