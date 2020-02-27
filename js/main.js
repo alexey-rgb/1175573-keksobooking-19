@@ -128,17 +128,17 @@ var fixAddressValueAndBlockFieldset = function () {
 // получаем значение поля с гостями для синхронизации полей ввода гостей и количества комнат
 
 var inputGuestsChangeNumberHandler = function () {
-  var getMessage1 = Nodes.ROOM_NUMBER.value !== Nodes.CAPACITY.value
+  var message = Nodes.ROOM_NUMBER.value !== Nodes.CAPACITY.value
     ? ('кол-во гостей должны быть равно количеству комнат') : ('');
-  Nodes.CAPACITY.setCustomValidity(getMessage1);
+  Nodes.CAPACITY.setCustomValidity(message);
 };
 
 // устанавливаем ограничение на длину вводимых символов в поле Заголовок объявления
 
 var titleInputChangeHandler = function () {
-  var getMessage2 = Nodes.TITLE_INPUT.value.trim().length < LengthSymbol.MIN || Nodes.TITLE_INPUT.value.trim().length > LengthSymbol.MAX
+  var message = Nodes.TITLE_INPUT.value.trim().length < LengthSymbol.MIN || Nodes.TITLE_INPUT.value.trim().length > LengthSymbol.MAX
     ? 'не меньше 30 и не больше 100 символов' : '';
-  Nodes.TITLE_INPUT.setCustomValidity(getMessage2);
+  Nodes.TITLE_INPUT.setCustomValidity(message);
 };
 
 // функция изменения значения поля цены, в зависимости от типа жилья
