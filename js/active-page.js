@@ -24,7 +24,7 @@
     // изменяется время выезда гостей при изменение времени заезда и наоборот
     window.nodes.TIME_SELECTS.forEach(window.form.setTimeChangeHandler);
     // присваиваем координаты полю с адресом
-    window.nodes.INPUT_ADDRESS.setAttribute('value', window.form.MAIN_PIN_POSITION + '');
+    // window.nodes.INPUT_ADDRESS.setAttribute('value', window.form.MAIN_PIN_POSITION + '');
   };
 
   var activatePageWorking = function () {

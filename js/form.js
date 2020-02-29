@@ -8,7 +8,7 @@
   };
 
   window.form = {
-    // координаты гланого пина
+    // координаты главного пина
 
     MAIN_PIN_POSITION: (window.data.MainPin.POSITION_X + (window.data.Pin.PIXEL_SIZE) * window.data.NUMBER_FOR_COUNT) + ', '
       + (window.data.MainPin.POSITION_Y + window.data.MainPin.HEIGHT + window.data.Pin.PSEUDO),
