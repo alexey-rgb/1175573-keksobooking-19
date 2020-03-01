@@ -18,13 +18,13 @@
       PERCENT: 100
     },
     Pin: {
-      PIXEL_SIZE: 40,
+      PIXEL_SIZE: 50,
       PSEUDO: 22
     },
     MainPin: {
       POSITION_X: 570,
       POSITION_Y: 375,
-      HEIGHT: 44
+      HEIGHT: 65
     },
     CHECKS: ['12:00', '13:00', '14:00'],
     TYPES: ['Дворец', 'Квартира', 'Дом', 'Бунгало'],

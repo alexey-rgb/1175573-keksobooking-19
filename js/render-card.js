@@ -42,7 +42,6 @@
     });
     return fragment5;
   };
-
   window.renderCard = {
     // создаем функцию для генерации 8 объектов
     PIN_PERCENT_SIZE: (window.data.Pin.PIXEL_SIZE * window.data.MaxMapWidth.PERCENT) / window.data.MaxMapWidth.PIXEL,
