@@ -36,9 +36,7 @@
     }
   };
 
-  // прослушка события на главной метке
-
-  window.nodes.MAIN_PIN.addEventListener('mousedown', function (evt) {
+  var mainPinMouseDownHandler = function (evt) {
     if (evt.buttons === 1) {
       evt.preventDefault();
 
@@ -76,5 +74,9 @@
       document.addEventListener('mousemove', mainPinMouseMoveHandler);
       document.addEventListener('mouseup', mainPinMouseUpHandler);
     }
-  });
+  };
+
+  // прослушка события на главной метке
+
+  window.nodes.MAIN_PIN.addEventListener('mousedown', mainPinMouseDownHandler);
 }());

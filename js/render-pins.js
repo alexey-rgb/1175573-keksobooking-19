@@ -1,22 +1,36 @@
 'use strict';
 
 (function () {
+  // размер пина в процентах
+
+  var PIN_PERCENT_SIZE = (window.data.Pin.PIXEL_SIZE * window.data.MaxMapWidth.PERCENT) / window.data.MaxMapWidth.PIXEL;
+
+  // дополнительная формула для расчета положения пина(используется в другой формуле)
+
+  var PIN_POSITION_FORMULA = (PIN_PERCENT_SIZE * window.data.NUMBER_FOR_COUNT);
+
   // функция создания пина
+
   var renderPin = function (item) {
-    var PIN_PERCENT_SIZE = (window.data.Pin.PIXEL_SIZE * window.data.MaxMapWidth.PERCENT) / window.data.MaxMapWidth.PIXEL;
-    var PIN_POSITION_FORMULA = (PIN_PERCENT_SIZE * window.data.NUMBER_FOR_COUNT);
+
     // присваиваем переменной создание клона карточки используя произвольный объект для заполнения шаблона
+
     var mock = window.renderCard.renderCard(item);
+
     var pinClickHandler = function () {
       // выводим карточку с описанием метки в dom
+
       if (window.nodes.MAP.querySelectorAll('.map__card').length > 0) {
         window.nodes.MAP.querySelector('.map__card').remove();
       }
       window.nodes.MAP.appendChild(mock);
     };
+
     // клонируем
+
     var pinElement = window.nodes.PIN_TEMPLATE.cloneNode(true);
     var pinImage = pinElement.querySelector('img');
+
     /* // ДЕЛЕГИРОВАНИЕ
     pinImage.className = 'target-img';
     var wrapperCLickHandler = function (evt) {
@@ -34,16 +48,21 @@
     pinElement.addEventListener('click', pinClickHandler);
     return pinElement;
   };
-  window.renderPins = {
-    // записываем во фрагмент пины
 
-    renderPins: function (mockArr) {
-      var target = renderPin;
-      var fragment1 = document.createDocumentFragment();
-      mockArr.forEach(function (item) {
-        fragment1.appendChild(target(item));
-      });
-      return fragment1;
-    }
+  // записываем во фрагмент пины
+
+  var renderPins = function (mocks) {
+    var target = renderPin;
+    var fragment1 = document.createDocumentFragment();
+    mocks.forEach(function (item) {
+      fragment1.appendChild(target(item));
+    });
+    return fragment1;
+  };
+
+  // экспорт
+
+  window.renderPins = {
+    renderPins: renderPins
   };
 }());
