@@ -9,6 +9,9 @@
   // общая функция блокироки/разблокировки полей ввода
 
   var setFieldsetCondition = function (arr, isEnable) {
+    /* arr.forEach(function (item) {
+       return (isEnable === true) ? item.removeAttribute('disabled') : item.setAttribute('disabled', 'disabled');
+     });*/
     if (isEnable === true) {
       arr.forEach(function (item) {
         item.removeAttribute('disabled');
@@ -37,7 +40,8 @@
   // устанавливаем ограничение на длину вводимых символов в поле Заголовок объявления
 
   var titleInputChangeHandler = function () {
-    var message = window.nodes.TITLE_INPUT.value.trim().length < window.data.LengthSymbol.MIN || window.nodes.TITLE_INPUT.value.trim().length > window.data.LengthSymbol.MAX
+    var message = window.nodes.TITLE_INPUT.value.trim().length < window.data.LengthSymbol.MIN
+    || window.nodes.TITLE_INPUT.value.trim().length > window.data.LengthSymbol.MAX
       ? 'не меньше 30 и не больше 100 символов' : '';
     window.nodes.TITLE_INPUT.setCustomValidity(message);
   };

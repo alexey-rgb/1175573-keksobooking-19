@@ -1,13 +1,9 @@
 'use strict';
 
 (function () {
-  // размер пина в процентах
-
-  var PIN_PERCENT_SIZE = (window.data.Pin.PIXEL_SIZE * window.data.MaxMapWidth.PERCENT) / window.data.MaxMapWidth.PIXEL;
-
   // дополнительная формула для расчета положения пина(используется в другой формуле)
 
-  var PIN_POSITION_FORMULA = (PIN_PERCENT_SIZE * window.data.NUMBER_FOR_COUNT);
+  var PIN_POSITION_FORMULA = (window.data.PIN_PERCENT_SIZE * window.data.NUMBER_FOR_COUNT);
 
   // функция создания пина
 
@@ -15,7 +11,7 @@
 
     // присваиваем переменной создание клона карточки используя произвольный объект для заполнения шаблона
 
-    var mock = window.renderCard.renderCard(item);
+    var card = window.card.renderCard(item);
 
     var pinClickHandler = function () {
       // выводим карточку с описанием метки в dom
@@ -23,7 +19,7 @@
       if (window.nodes.MAP.querySelectorAll('.map__card').length > 0) {
         window.nodes.MAP.querySelector('.map__card').remove();
       }
-      window.nodes.MAP.appendChild(mock);
+      window.nodes.MAP.appendChild(card);
     };
 
     // клонируем
@@ -52,17 +48,16 @@
   // записываем во фрагмент пины
 
   var renderPins = function (mocks) {
-    var target = renderPin;
     var fragment1 = document.createDocumentFragment();
     mocks.forEach(function (item) {
-      fragment1.appendChild(target(item));
+      fragment1.appendChild(renderPin(item));
     });
     return fragment1;
   };
 
   // экспорт
 
-  window.renderPins = {
+  window.pin = {
     renderPins: renderPins
   };
 }());

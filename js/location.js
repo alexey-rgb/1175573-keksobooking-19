@@ -20,20 +20,27 @@
 
   // Проверка области перемещения
 
-  var checkLimitMainPinCoordinates = function () {
-    // если выходит за пределы поля слева, то
+  var getLeftPosition = function () {
     if (window.nodes.MAIN_PIN.offsetLeft <= limitMainPin.left) {
       window.nodes.MAIN_PIN.style.left = limitMainPin.left + 'px';
     }
     if (window.nodes.MAIN_PIN.offsetLeft >= limitMainPin.right) {
       window.nodes.MAIN_PIN.style.left = limitMainPin.right + 'px';
     }
+  };
+
+  var getTopPosition = function () {
     if (window.nodes.MAIN_PIN.offsetTop <= limitMainPin.top) {
       window.nodes.MAIN_PIN.style.top = limitMainPin.top + 'px';
     }
     if (window.nodes.MAIN_PIN.offsetTop >= limitMainPin.bottom) {
       window.nodes.MAIN_PIN.style.top = limitMainPin.bottom + 'px';
     }
+  };
+
+  var checkLimitMainPinCoordinates = function () {
+    getLeftPosition(window.nodes.MAIN_PIN.offsetLeft);
+    getTopPosition(window.nodes.MAIN_PIN.offsetTop);
   };
 
   var mainPinMouseDownHandler = function (evt) {
