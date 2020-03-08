@@ -11,7 +11,7 @@
 
     // присваиваем переменной создание клона карточки используя произвольный объект для заполнения шаблона
 
-    var card = window.card.renderCard(item);
+    var getNewCard = window.card.renderCard(item);
 
     var pinClickHandler = function () {
       // выводим карточку с описанием метки в dom
@@ -19,7 +19,7 @@
       if (window.nodes.MAP.querySelectorAll('.map__card').length > 0) {
         window.nodes.MAP.querySelector('.map__card').remove();
       }
-      window.nodes.MAP.appendChild(card);
+      window.nodes.MAP.appendChild(getNewCard);
     };
 
     // клонируем

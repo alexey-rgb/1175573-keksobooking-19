@@ -9,19 +9,9 @@
   // общая функция блокироки/разблокировки полей ввода
 
   var setFieldsetCondition = function (arr, isEnable) {
-    /* arr.forEach(function (item) {
-       return (isEnable === true) ? item.removeAttribute('disabled') : item.setAttribute('disabled', 'disabled');
-     });*/
-    if (isEnable === true) {
-      arr.forEach(function (item) {
-        item.removeAttribute('disabled');
-      });
-    }
-    if (isEnable === false) {
-      arr.forEach(function (item) {
-        item.setAttribute('disabled', 'disabled');
-      });
-    }
+    arr.forEach(function (item) {
+      return (isEnable === true) ? item.removeAttribute('disabled') : item.setAttribute('disabled', 'disabled');
+    });
   };
 
   // функция отрисовки координат метки в поле ввода адреса и блокировки полей ввода до активации страницы

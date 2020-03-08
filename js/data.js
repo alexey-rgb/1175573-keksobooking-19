@@ -61,6 +61,7 @@
       value: 'bungalo'
     }
   };
+
   var Position = {
     Y_MIN: 130,
     Y_MAX: 630,
@@ -86,7 +87,7 @@
 
   var mockData = function (number) {
     var MapWidth = {
-      MAX: Math.floor(window.data.MaxMapWidth.PERCENT - PIN_PERCENT_SIZE),
+      MAX: Math.floor(MaxMapWidth.PERCENT - PIN_PERCENT_SIZE),
       MIN: Math.floor(PIN_PERCENT_SIZE)
     };
     // создаем пустой массив объектов

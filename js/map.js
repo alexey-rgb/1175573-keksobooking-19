@@ -25,9 +25,14 @@
   };
 
   var activatePageWorking = function () {
+    var flag = true;
     // функция активации страницы при клике на главный пин и на ENTER
 
     var mainPinClickHandler = function (evt) {
+      if (flag) {
+        window.nodes.MAIN_PIN.removeEventListener('mousedown', mainPinClickHandler);
+        window.nodes.MAIN_PIN.removeEventListener('keydown', mainPinKeyDownHandler);
+      }
       if (evt.button === window.data.MouseKey.MIDDLE || evt.button === window.data.MouseKey.RIGHT) {
         window.nodes.MAIN_PIN.disable();
       }
@@ -36,10 +41,15 @@
     };
 
     var mainPinKeyDownHandler = function (evt) {
+      if (flag) {
+        window.nodes.MAIN_PIN.removeEventListener('mousedown', mainPinClickHandler);
+        window.nodes.MAIN_PIN.removeEventListener('keydown', mainPinKeyDownHandler);
+      }
       if (evt.key === 'Enter') {
         startActivePageSettings();
       }
     };
+
     // активация страницы кликом
     window.nodes.MAIN_PIN.addEventListener('mousedown', mainPinClickHandler);
     // активация страницы с клавиатуры
