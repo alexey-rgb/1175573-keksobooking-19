@@ -14,10 +14,13 @@
     var getNewCard = window.card.renderCard(item);
 
     var pinClickHandler = function () {
+      // коллекция карточек с описанием объявления
+      var cards = window.nodes.MAP.querySelectorAll('.map__card');
+      // карточка с описанием объявления
+      var card = window.nodes.MAP.querySelector('.map__card');
       // выводим карточку с описанием метки в dom
-
-      if (window.nodes.MAP.querySelectorAll('.map__card').length > 0) {
-        window.nodes.MAP.querySelector('.map__card').remove();
+      if (cards.length > 0) {
+        card.remove();
       }
       window.nodes.MAP.appendChild(getNewCard);
     };

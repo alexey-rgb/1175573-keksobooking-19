@@ -1,10 +1,16 @@
 'use strict';
 
 (function () {
-// Ограничения рабочей области карты
+  var mapWidth = document.querySelector('.map__overlay').offsetWidth;
+
+  var mainPinWidth = window.nodes.MAIN_PIN.offsetWidth;
+
+  var mainPinHeight = window.nodes.MAIN_PIN.offsetHeight;
+
+  // Ограничения рабочей области карты
   var LOCATION = {
     X_MIN: 0,
-    X_MAX: document.querySelector('.map__overlay').offsetWidth,
+    X_MAX: mapWidth,
     Y_MIN: 130,
     Y_MAX: 630
   };
@@ -12,35 +18,39 @@
   // Ограничения для перемещения главной метки
 
   var limitMainPin = {
-    left: LOCATION.X_MIN - (window.nodes.MAIN_PIN.offsetWidth / 2),
-    right: LOCATION.X_MAX - (window.nodes.MAIN_PIN.offsetWidth / 2),
-    top: LOCATION.Y_MIN - window.nodes.MAIN_PIN.offsetHeight - window.data.Pin.PSEUDO,
-    bottom: LOCATION.Y_MAX - window.nodes.MAIN_PIN.offsetHeight - window.data.Pin.PSEUDO
+    left: LOCATION.X_MIN - (mainPinWidth / 2),
+    right: LOCATION.X_MAX - (mainPinWidth / 2),
+    top: LOCATION.Y_MIN - mainPinHeight - window.data.Pin.PSEUDO,
+    bottom: LOCATION.Y_MAX - mainPinHeight - window.data.Pin.PSEUDO
   };
 
   // Проверка области перемещения
 
   var getLeftPosition = function () {
+    var result;
     if (window.nodes.MAIN_PIN.offsetLeft <= limitMainPin.left) {
-      window.nodes.MAIN_PIN.style.left = limitMainPin.left + 'px';
+      result = limitMainPin.left + 'px';
     }
     if (window.nodes.MAIN_PIN.offsetLeft >= limitMainPin.right) {
-      window.nodes.MAIN_PIN.style.left = limitMainPin.right + 'px';
+      result = limitMainPin.right + 'px';
     }
+    return result;
   };
 
   var getTopPosition = function () {
+    var result;
     if (window.nodes.MAIN_PIN.offsetTop <= limitMainPin.top) {
-      window.nodes.MAIN_PIN.style.top = limitMainPin.top + 'px';
+      result = limitMainPin.top + 'px';
     }
     if (window.nodes.MAIN_PIN.offsetTop >= limitMainPin.bottom) {
-      window.nodes.MAIN_PIN.style.top = limitMainPin.bottom + 'px';
+      result = limitMainPin.bottom + 'px';
     }
+    return result;
   };
 
-  var checkLimitMainPinCoordinates = function () {
-    getLeftPosition(window.nodes.MAIN_PIN.offsetLeft);
-    getTopPosition(window.nodes.MAIN_PIN.offsetTop);
+  var checkLimitMainPinCoordinates = function (leftPosition, topPosition) {
+    window.nodes.MAIN_PIN.style.left = getLeftPosition(leftPosition);
+    window.nodes.MAIN_PIN.style.top = getTopPosition(topPosition);
   };
 
   var mainPinMouseDownHandler = function (evt) {
@@ -68,7 +78,7 @@
         window.nodes.MAIN_PIN.style.left = window.nodes.MAIN_PIN.offsetLeft - shift.x + 'px';
         window.nodes.MAIN_PIN.style.top = window.nodes.MAIN_PIN.offsetTop - shift.y + 'px';
 
-        checkLimitMainPinCoordinates();
+        checkLimitMainPinCoordinates(window.nodes.MAIN_PIN.offsetLeft, window.nodes.MAIN_PIN.offsetTop);
         window.nodes.INPUT_ADDRESS.value = (window.nodes.MAIN_PIN.offsetTop - shift.y)
           + ',' + (window.nodes.MAIN_PIN.offsetLeft - shift.x);
       };

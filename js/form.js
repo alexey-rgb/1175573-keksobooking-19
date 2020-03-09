@@ -10,7 +10,7 @@
 
   var setFieldsetCondition = function (arr, isEnable) {
     arr.forEach(function (item) {
-      return (isEnable === true) ? item.removeAttribute('disabled') : item.setAttribute('disabled', 'disabled');
+      item[isEnable ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled');
     });
   };
 
@@ -23,7 +23,7 @@
 
   var inputGuestsChangeNumberHandler = function () {
     var message = window.nodes.ROOM_NUMBER.value !== window.nodes.CAPACITY.value
-      ? ('кол-во гостей должны быть равно количеству комнат') : ('');
+      ? 'кол-во гостей должны быть равно количеству комнат' : '';
     window.nodes.CAPACITY.setCustomValidity(message);
   };
 
