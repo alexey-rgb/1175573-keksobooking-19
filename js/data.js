@@ -92,11 +92,11 @@
     };
     // создаем пустой массив объектов
     var objects = [];
-    for (var i = 0; i < number; i++) {
+    for (var i = 1; i < number; i++) {
       var positionX = window.util.getRandomBetween(MapWidth.MIN, MapWidth.MAX);
       var positionY = window.util.getRandomBetween(window.data.Position.Y_MIN, window.data.Position.Y_MAX);
       objects.push({
-        'avatar': 'img/avatars/user' + ('' + (i + 1)).padStart(2, '0') + '.png',
+        'avatar': 'img/avatars/user' + ('' + i).padStart(2, '0') + '.png',
         'title': 'заголовок объявления',
         'address': '' + positionX + ', ' + positionY,
         'price': window.util.getRandomBetween(window.data.Price.MIN, window.data.Price.MAX) + ' Рублей/ночь',

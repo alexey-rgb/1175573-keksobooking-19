@@ -24,30 +24,31 @@
     window.nodes.TIME_SELECTS.forEach(window.form.setTimeChangeHandler);
   };
 
+  // снимает возможность повторно активировать страницу, при клике по главной метке(в том числе выводить дополнительные пины и прочее)
+
+  var eventRemoveHandler = function (function1, function2) {
+    window.nodes.MAIN_PIN.removeEventListener('mousedown', function1);
+    window.nodes.MAIN_PIN.removeEventListener('keydown', function2);
+  };
+
   var activatePageWorking = function () {
-    var flag = true;
+
     // функция активации страницы при клике на главный пин и на ENTER
 
     var mainPinClickHandler = function (evt) {
-      if (flag) {
-        window.nodes.MAIN_PIN.removeEventListener('mousedown', mainPinClickHandler);
-        window.nodes.MAIN_PIN.removeEventListener('keydown', mainPinKeyDownHandler);
-      }
       if (evt.button === window.data.MouseKey.MIDDLE || evt.button === window.data.MouseKey.RIGHT) {
         window.nodes.MAIN_PIN.disable();
       }
+      eventRemoveHandler(mainPinClickHandler, mainPinKeyDownHandler);
       startActivePageSettings();
       window.nodes.POPUP_PHOTO.hidden = true;
     };
 
     var mainPinKeyDownHandler = function (evt) {
-      if (flag) {
-        window.nodes.MAIN_PIN.removeEventListener('mousedown', mainPinClickHandler);
-        window.nodes.MAIN_PIN.removeEventListener('keydown', mainPinKeyDownHandler);
-      }
       if (evt.key === 'Enter') {
         startActivePageSettings();
       }
+      eventRemoveHandler(mainPinClickHandler, mainPinKeyDownHandler);
     };
 
     // активация страницы кликом
