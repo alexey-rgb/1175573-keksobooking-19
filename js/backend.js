@@ -21,6 +21,7 @@
   // мутирует ответ с сервера(карточки) и выводит в дом
 
   var loadCards = function (items, index1, index2) {
+    window.backendCards = items;
     var newCards = items.slice(index1, index2);
     return window.nodes.MAP.appendChild(window.pin.renderPins(newCards));
   };
@@ -31,7 +32,6 @@
     var xhr = new XMLHttpRequest();
     var contentLoadHandler = function () {
       // экспорт
-      window.backendCards = xhr.response;
       return loadCards(xhr.response, IndexCards.FROM, IndexCards.TO);
     };
     xhr.responseType = 'json';

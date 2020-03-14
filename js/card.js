@@ -1,12 +1,9 @@
 'use strict';
 
 (function () {
-  // находим первый попавшийся элемент списка из шаблона карточки(с описанием)
-
-  // var FEATURE = window.nodes.FEATURES.querySelector('.popup__feature');
+  // находим первый попавшийся элемент списка из шаблона карточки(с описанием);
 
   var FEATURE = window.nodes.FEATURES.children[0];
-  console.log(FEATURE);
 
   // функция показывает как можно закрыть карточку с описанием пина
 
