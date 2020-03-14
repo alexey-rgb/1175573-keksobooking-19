@@ -24,6 +24,11 @@
     TITLE_INPUT: document.querySelector('#title'),
     CAPACITY: document.querySelector('#capacity'),
     ROOM_NUMBER: document.querySelector('#room_number'),
-    TIME_SELECTS: document.querySelectorAll('select')
+    TIME_SELECTS: document.querySelectorAll('select'),
+    SUCCESS_MESSAGE: document.querySelector('#success').content,
+    ERROR_MESSAGE_TEMPLATE: document.querySelector('#error').content,
+    BODY: document.querySelector('body'),
+    MAIN: document.querySelector('main'),
+    BUTTON_RESET_FORM: document.querySelector('.ad-form__reset')
   };
 }());

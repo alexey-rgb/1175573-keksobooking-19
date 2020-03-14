@@ -13,14 +13,14 @@
 
     var getNewCard = window.card.renderCard(item);
 
+    // выводит в дом карточку с описанием объявления + убирает дублирование открытой карточки в случае перехода от одной к другой
+
     var pinClickHandler = function () {
       // коллекция карточек с описанием объявления
       var cards = window.nodes.MAP.querySelectorAll('.map__card');
-      // карточка с описанием объявления
-      var card = window.nodes.MAP.querySelector('.map__card');
       // выводим карточку с описанием метки в dom
       if (cards.length > 0) {
-        card.remove();
+        cards[0].remove();
       }
       window.nodes.MAP.appendChild(getNewCard);
     };
@@ -38,9 +38,9 @@
       }
     };
     window.nodes.MAP.addEventListener('click', wrapperCLickHandler);*/
-    pinImage.src = item.avatar;
-    pinImage.alt = item.title;
-    pinElement.style.left = (item.location.x) + (-PIN_POSITION_FORMULA) + '%';
+    pinImage.src = item.author.avatar;
+    pinImage.alt = item.offer.title;
+    pinElement.style.left = item.location.x - (window.data.PinPixelSize * window.data.NUMBER_FOR_COUNT) + 'px';
     pinElement.style.top = 'calc(' + (item.location.y) + 'px + ' + (-PIN_POSITION_FORMULA * 2) + '%)';
     pinElement.setAttribute('tabindex', '1');
     // при клике на пин показываем карточку с описанием
@@ -50,9 +50,9 @@
 
   // записываем во фрагмент пины
 
-  var renderPins = function (mocks) {
+  var renderPins = function (items) {
     var fragment1 = document.createDocumentFragment();
-    mocks.forEach(function (item) {
+    items.forEach(function (item) {
       fragment1.appendChild(renderPin(item));
     });
     return fragment1;
