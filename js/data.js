@@ -34,8 +34,8 @@
 
   // ФИЧИ
 
-  var FEATURES_CLASS_CONSTRUCTION1 = 'popup__feature popup__feature-';
-  var FEATURES_CLASS_CONSTRUCTION2 = ['-wifi', '-dishwasher', '-parking', '-washer', '-elevator', '-conditioner'];
+  var FEATURES_CLASS_CONSTRUCTION1 = 'popup__feature popup__feature--';
+ // var FEATURES_CLASS_CONSTRUCTION2 = ['-wifi', '-dishwasher', '-parking', '-washer', '-elevator', '-conditioner'];
 
   // Объект для управления полями ввода(синхронизация)
 
@@ -83,7 +83,7 @@
 
   var PIN_PERCENT_SIZE = (PinPixelSize * MaxMapWidth.PERCENT) / MaxMapWidth.PIXEL;
 
-  // создаем массив клонированных объектов(моки)
+  /* // создаем массив клонированных объектов(моки)
 
   var mockData = function (number) {
     var MapWidth = {
@@ -116,7 +116,7 @@
     }
     return objects;
   };
-
+*/
   // Экспорт
 
   window.data = {
@@ -133,13 +133,14 @@
     PHOTO_APARTMENTS: PHOTO_APARTMENTS,
     // ФИЧИ
     FEATURES_CLASS_CONSTRUCTION1: FEATURES_CLASS_CONSTRUCTION1,
-    FEATURES_CLASS_CONSTRUCTION2: FEATURES_CLASS_CONSTRUCTION2,
+   // FEATURES_CLASS_CONSTRUCTION2: FEATURES_CLASS_CONSTRUCTION2,
     // Объект для управления полями ввода(синхронизация)
     ROOM_DATA: ROOM_DATA,
     Position: Position,
     LengthSymbol: LengthSymbol,
     MouseKey: MouseKey,
-    mockData: mockData,
-    PIN_PERCENT_SIZE: PIN_PERCENT_SIZE
+    // mockData: mockData,
+    PIN_PERCENT_SIZE: PIN_PERCENT_SIZE,
+    PinPixelSize: PinPixelSize
   };
 }());

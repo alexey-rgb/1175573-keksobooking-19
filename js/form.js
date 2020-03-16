@@ -8,9 +8,9 @@
 
   // общая функция блокироки/разблокировки полей ввода
 
-  var setFieldsetCondition = function (arr, isEnable) {
+  var setFieldsetCondition = function (arr, enable) {
     arr.forEach(function (item) {
-      item[isEnable ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled');
+      item[enable ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled');
     });
   };
 
@@ -60,6 +60,13 @@
     item.addEventListener('change', inputTimeInChangeHandler);
   };
 
+  // блокируем поля ввода
+  setFieldsetCondition(window.nodes.FIELDSET, false);
+
+  // отправляем данные на сервер при клики на кнопку 'опубликовать'
+
+  window.nodes.FORM.addEventListener('submit', window.backend.formSubmitHandler);
+
   // экспорт
 
   window.form = {
@@ -71,6 +78,4 @@
     setTimeChangeHandler: setTimeChangeHandler,
     setFieldsetCondition: setFieldsetCondition
   };
-  // блокируем поля ввода
-  setFieldsetCondition(window.nodes.FIELDSET, false);
 }());

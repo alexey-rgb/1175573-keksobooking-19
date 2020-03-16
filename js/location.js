@@ -1,16 +1,29 @@
 'use strict';
 
 (function () {
-  var mapWidth = document.querySelector('.map__overlay').offsetWidth;
 
-  var mainPinWidth = window.nodes.MAIN_PIN.offsetWidth;
+  var MAP_WRAPPER = document.querySelector('.map__overlay');
 
-  var mainPinHeight = window.nodes.MAIN_PIN.offsetHeight;
+  var getMapWidth = function () {
+    return MAP_WRAPPER.offsetWidth;
+  };
+
+  var enumList = {
+    getMainPinWidth: function () {
+      return window.nodes.MAIN_PIN.offsetWidth;
+    },
+    getMainPinHeight: function () {
+      return window.nodes.MAIN_PIN.offsetHeight;
+    }
+  };
+
+  Object.freeze(enumList);
 
   // Ограничения рабочей области карты
+
   var LOCATION = {
     X_MIN: 0,
-    X_MAX: mapWidth,
+    X_MAX: getMapWidth(),
     Y_MIN: 130,
     Y_MAX: 630
   };
@@ -18,34 +31,43 @@
   // Ограничения для перемещения главной метки
 
   var limitMainPin = {
-    left: LOCATION.X_MIN - (mainPinWidth / 2),
-    right: LOCATION.X_MAX - (mainPinWidth / 2),
-    top: LOCATION.Y_MIN - mainPinHeight - window.data.Pin.PSEUDO,
-    bottom: LOCATION.Y_MAX - mainPinHeight - window.data.Pin.PSEUDO
+    left: LOCATION.X_MIN - (enumList.getMainPinWidth() / 2),
+    right: LOCATION.X_MAX - (enumList.getMainPinWidth() / 2),
+    top: LOCATION.Y_MIN - enumList.getMainPinHeight() - window.data.Pin.PSEUDO,
+    bottom: LOCATION.Y_MAX - enumList.getMainPinHeight() - window.data.Pin.PSEUDO
   };
 
   // Проверка области перемещения
 
-  var getLeftPosition = function () {
+  var setDefaultPosition = function () {
     var result;
-    if (window.nodes.MAIN_PIN.offsetLeft <= limitMainPin.left) {
+    if (window.nodes.MAIN_PIN.offsetLeft === limitMainPin.left) {
       result = limitMainPin.left + 'px';
-    }
-    if (window.nodes.MAIN_PIN.offsetLeft >= limitMainPin.right) {
+    } else if (window.nodes.MAIN_PIN.offsetLeft === limitMainPin.right) {
       result = limitMainPin.right + 'px';
     }
     return result;
   };
 
+  var getLeftPosition = function () {
+    if (window.nodes.MAIN_PIN.offsetLeft <= limitMainPin.left) {
+      return limitMainPin.left + 'px';
+    }
+    if (window.nodes.MAIN_PIN.offsetLeft >= limitMainPin.right) {
+      return limitMainPin.right + 'px';
+    }
+    return setDefaultPosition();
+  };
+
   var getTopPosition = function () {
-    var result;
+
     if (window.nodes.MAIN_PIN.offsetTop <= limitMainPin.top) {
-      result = limitMainPin.top + 'px';
+      return limitMainPin.top + 'px';
     }
     if (window.nodes.MAIN_PIN.offsetTop >= limitMainPin.bottom) {
-      result = limitMainPin.bottom + 'px';
+      return limitMainPin.bottom + 'px';
     }
-    return result;
+    return setDefaultPosition();
   };
 
   var checkLimitMainPinCoordinates = function (leftPosition, topPosition) {
