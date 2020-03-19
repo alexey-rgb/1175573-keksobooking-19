@@ -35,7 +35,6 @@
   // ФИЧИ
 
   var FEATURES_CLASS_CONSTRUCTION1 = 'popup__feature popup__feature--';
- // var FEATURES_CLASS_CONSTRUCTION2 = ['-wifi', '-dishwasher', '-parking', '-washer', '-elevator', '-conditioner'];
 
   // Объект для управления полями ввода(синхронизация)
 
@@ -83,40 +82,37 @@
 
   var PIN_PERCENT_SIZE = (PinPixelSize * MaxMapWidth.PERCENT) / MaxMapWidth.PIXEL;
 
-  /* // создаем массив клонированных объектов(моки)
+  var copyServerResponse = [];
 
-  var mockData = function (number) {
-    var MapWidth = {
-      MAX: Math.floor(MaxMapWidth.PERCENT - PIN_PERCENT_SIZE),
-      MIN: Math.floor(PIN_PERCENT_SIZE)
-    };
-    // создаем пустой массив объектов
-    var objects = [];
-    for (var i = 1; i < number; i++) {
-      var positionX = window.util.getRandomBetween(MapWidth.MIN, MapWidth.MAX);
-      var positionY = window.util.getRandomBetween(window.data.Position.Y_MIN, window.data.Position.Y_MAX);
-      objects.push({
-        'avatar': 'img/avatars/user' + ('' + i).padStart(2, '0') + '.png',
-        'title': 'заголовок объявления',
-        'address': '' + positionX + ', ' + positionY,
-        'price': window.util.getRandomBetween(window.data.Price.MIN, window.data.Price.MAX) + ' Рублей/ночь',
-        'type': window.util.getRandomItem(window.data.TYPES),
-        'rooms': window.util.getRandomBetween(window.data.Value.MIN, window.data.Value.MAX),
-        'guests': window.util.getRandomBetween(window.data.Value.MIN, window.data.Value.MAX),
-        'checkin': window.util.getRandomItem(window.data.CHECKS),
-        'checkout': window.util.getRandomItem(window.data.CHECKS),
-        'features': window.util.getRandomItems2(window.data.FEATURES_CLASS_CONSTRUCTION2),
-        'description': 'Уютное местечко',
-        'photos': window.util.getRandomItems2(window.data.PHOTO_APARTMENTS),
-        'location': {
-          'x': positionX,
-          'y': positionY,
-        }
-      });
-    }
-    return objects;
+  var PINS;
+
+  var getRenderPins = function (items, index1, index2) {
+    window.copyServerResponse = items.slice();
+    return window.nodes.MAP.appendChild(window.pin.renderPins(window.filter.getSliceData(items, index1, index2)));
   };
-*/
+
+  var renderFilteredPin = function () {
+    return window.nodes.MAP.appendChild(window.pin.renderPins(window.filter.filterByTypeApart(window.copyServerResponse)));
+  };
+
+  var startRenderPins = function () {
+    window.backend.loadCards(getRenderPins, window.backend.Url.GET);
+  };
+
+  var startRenderFilteredPins = function (evt) {
+    PINS = window.nodes.MAP.querySelectorAll('button[type="button"]');
+    if (evt.target === window.filter.HOUSING_TYPE) {
+      PINS.forEach(function (pin) {
+        pin.remove();
+      });
+      window.backend.loadCards(renderFilteredPin, window.backend.Url.GET);
+    }
+  };
+
+  var loadData = function (fun) {
+    window.util.mainPinHandlers(fun);
+  };
+
   // Экспорт
 
   window.data = {
@@ -133,7 +129,7 @@
     PHOTO_APARTMENTS: PHOTO_APARTMENTS,
     // ФИЧИ
     FEATURES_CLASS_CONSTRUCTION1: FEATURES_CLASS_CONSTRUCTION1,
-   // FEATURES_CLASS_CONSTRUCTION2: FEATURES_CLASS_CONSTRUCTION2,
+    // FEATURES_CLASS_CONSTRUCTION2: FEATURES_CLASS_CONSTRUCTION2,
     // Объект для управления полями ввода(синхронизация)
     ROOM_DATA: ROOM_DATA,
     Position: Position,
@@ -141,6 +137,10 @@
     MouseKey: MouseKey,
     // mockData: mockData,
     PIN_PERCENT_SIZE: PIN_PERCENT_SIZE,
-    PinPixelSize: PinPixelSize
+    PinPixelSize: PinPixelSize,
+    loadData: loadData,
+    startRenderPins: startRenderPins,
+    copyServerResponse: copyServerResponse,
+    startRenderFilteredPins: startRenderFilteredPins
   };
 }());

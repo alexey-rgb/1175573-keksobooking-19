@@ -9,8 +9,9 @@
   // общая функция блокироки/разблокировки полей ввода
 
   var setFieldsetCondition = function (arr, enable) {
+    var attributeConstructor = enable ? 'removeAttribute' : 'setAttribute';
     arr.forEach(function (item) {
-      item[enable ? 'removeAttribute' : 'setAttribute']('disabled', 'disabled');
+      item[attributeConstructor]('disabled', 'disabled');
     });
   };
 
@@ -63,9 +64,21 @@
   // блокируем поля ввода
   setFieldsetCondition(window.nodes.FIELDSET, false);
 
+  var saveData = function () {
+    window.backend.postForm(new FormData(window.nodes.FORM),
+      window.message.onSuccess, window.message.onError, window.backend.Url.POST);
+  };
+
+  // присваиваем переменной вызов функции отправки формы на сервер, скрывает дефолтные настройки
+
+  var formSubmitHandler = function (evt) {
+    saveData();
+    evt.preventDefault();
+  };
+
   // отправляем данные на сервер при клики на кнопку 'опубликовать'
 
-  window.nodes.FORM.addEventListener('submit', window.backend.formSubmitHandler);
+  window.nodes.FORM.addEventListener('submit', formSubmitHandler);
 
   // экспорт
 
