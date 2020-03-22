@@ -32,11 +32,7 @@
     'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
     'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 
-  // ФИЧИ
-
   var FEATURES_CLASS_CONSTRUCTION1 = 'popup__feature popup__feature--';
-
-  // Объект для управления полями ввода(синхронизация)
 
   var ROOM_DATA = {
     palace: {
@@ -120,7 +116,6 @@
   // Экспорт
 
   window.data = {
-    // объявляем константы перечисления, массивы
     NUMBER_FOR_COUNT: NUMBER_FOR_COUNT,
     OBJECT_NUMBER: OBJECT_NUMBER,
     Value: Value,
@@ -131,10 +126,7 @@
     CHECKS: CHECKS,
     TYPES: TYPES,
     PHOTO_APARTMENTS: PHOTO_APARTMENTS,
-    // ФИЧИ
     FEATURES_CLASS_CONSTRUCTION1: FEATURES_CLASS_CONSTRUCTION1,
-    // FEATURES_CLASS_CONSTRUCTION2: FEATURES_CLASS_CONSTRUCTION2,
-    // Объект для управления полями ввода(синхронизация)
     ROOM_DATA: ROOM_DATA,
     Position: Position,
     LengthSymbol: LengthSymbol,
