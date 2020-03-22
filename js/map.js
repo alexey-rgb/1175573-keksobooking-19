@@ -23,6 +23,7 @@
     // нажатие на кнопку -> форма очищается
     window.nodes.BUTTON_RESET_FORM.addEventListener('click', function () {
       window.nodes.FORM.reset();
+      window.filter.setDefaultFiltersValue();
     });
   };
 

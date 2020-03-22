@@ -60,10 +60,6 @@
       addMainPinKeyHandler(renderCards));
   };
 
-  var disableElement = function (element) {
-    return element.setAttribute('disabled', 'disabled');
-  };
-
   window.util = {
     getRandomItem: getRandomItem,
     getRandomItems2: getRandomItems2,
@@ -71,7 +67,6 @@
     addHandlers: addHandlers,
     addMainPinHandler: addMainPinHandler,
     addMainPinKeyHandler: addMainPinKeyHandler,
-    mainPinHandlers: mainPinHandlers,
-    disableElement: disableElement
+    mainPinHandlers: mainPinHandlers
   };
 }());

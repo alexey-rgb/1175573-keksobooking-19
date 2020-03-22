@@ -80,28 +80,29 @@
 
   var PINS;
 
+  var copyServerResponse = [];
+
   var getRenderPins = function (items, index1, index2) {
-    window.copyServerResponse = items.slice();
-    return window.nodes.MAP.appendChild(window.pin.renderPins(window.filter.getDataSlice(items, index1, index2)));
+    copyServerResponse = items.slice();
+    window.nodes.MAP.appendChild(window.pin.renderPins(window.filter.getDataSlice(items, index1, index2)));
   };
 
   var renderFilteredPins = function () {
-    window.nodes.MAP.appendChild(window.pin.renderPins(window.filter.filterOffers(window.copyServerResponse)));
+    window.nodes.MAP.appendChild(window.pin.renderPins(window.filter.filterOffers(copyServerResponse)));
   };
 
   var startRenderPins = function () {
+    if (copyServerResponse.length > 0) {
+      return;
+    }
     window.backend.loadCards(getRenderPins, window.backend.Url.GET);
   };
 
-  var setFilter = function (evt) {
-    window.filter.Nodes.FILTERS.forEach(function (filter) {
-
-      PINS.forEach(function (pin) {
-        pin.remove();
-      });
-      renderFilteredPins();
-
+  var setFilter = function () {
+    PINS.forEach(function (pin) {
+      pin.remove();
     });
+    renderFilteredPins();
   };
 
   var startRenderFilteredPins = function (evt) {
@@ -136,6 +137,6 @@
     PinPixelSize: PinPixelSize,
     loadData: loadData,
     startRenderPins: startRenderPins,
-    startRenderFilteredPins: startRenderFilteredPins
+    startRenderFilteredPins: startRenderFilteredPins,
   };
 }());

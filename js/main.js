@@ -1,5 +1,8 @@
 'use strict';
 
 (function () {
-  window.addEventListener('load', window.data.loadData(window.data.startRenderPins));
+  var renderOffers = function () {
+    window.addEventListener('load', window.data.loadData(window.data.startRenderPins));
+  };
+  renderOffers();
 }());
