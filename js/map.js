@@ -12,7 +12,7 @@
     // показываем карту обявлений
     window.nodes.MAP.classList.remove('map--faded');
     // ФИЛЬТРАЦИЯ ПО ТИПУ ЖИЛЬЯ
-    window.nodes.MAP.addEventListener('change', window.filter.filterFieldsClickHandler);
+    window.filter.Nodes.FILTER_CONTAINER.addEventListener('change', window.filter.filterClickHandler);
     // отслеживаем изменения и по необходимости изменяем подсказки в полях
     window.nodes.BUTTON_SUBMIT.addEventListener('click', window.form.inputGuestsChangeNumberHandler);
     window.nodes.BUTTON_SUBMIT.addEventListener('click', window.form.titleInputChangeHandler);

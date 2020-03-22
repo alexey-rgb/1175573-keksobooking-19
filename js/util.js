@@ -60,8 +60,8 @@
       addMainPinKeyHandler(renderCards));
   };
 
-  var disableElement = function () {
-    return window.nodes.MAIN_PIN.setAttribute('disabled', 'disabled');
+  var disableElement = function (element) {
+    return element.setAttribute('disabled', 'disabled');
   };
 
   window.util = {

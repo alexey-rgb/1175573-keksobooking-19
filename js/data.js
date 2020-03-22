@@ -82,31 +82,35 @@
 
   var PIN_PERCENT_SIZE = (PinPixelSize * MaxMapWidth.PERCENT) / MaxMapWidth.PIXEL;
 
-  var copyServerResponse = [];
-
   var PINS;
 
   var getRenderPins = function (items, index1, index2) {
     window.copyServerResponse = items.slice();
-    return window.nodes.MAP.appendChild(window.pin.renderPins(window.filter.getSliceData(items, index1, index2)));
+    return window.nodes.MAP.appendChild(window.pin.renderPins(window.filter.getDataSlice(items, index1, index2)));
   };
 
-  var renderFilteredPin = function () {
-    return window.nodes.MAP.appendChild(window.pin.renderPins(window.filter.filterByTypeApart(window.copyServerResponse)));
+  var renderFilteredPins = function () {
+    window.nodes.MAP.appendChild(window.pin.renderPins(window.filter.filterOffers(window.copyServerResponse)));
   };
 
   var startRenderPins = function () {
     window.backend.loadCards(getRenderPins, window.backend.Url.GET);
   };
 
-  var startRenderFilteredPins = function (evt) {
-    PINS = window.nodes.MAP.querySelectorAll('button[type="button"]');
-    if (evt.target === window.filter.HOUSING_TYPE) {
+  var setFilter = function (evt) {
+    window.filter.Nodes.FILTERS.forEach(function (filter) {
+
       PINS.forEach(function (pin) {
         pin.remove();
       });
-      window.backend.loadCards(renderFilteredPin, window.backend.Url.GET);
-    }
+      renderFilteredPins();
+
+    });
+  };
+
+  var startRenderFilteredPins = function (evt) {
+    PINS = window.nodes.MAP.querySelectorAll('button[type="button"]');
+    setFilter(evt);
   };
 
   var loadData = function (fun) {
@@ -140,7 +144,6 @@
     PinPixelSize: PinPixelSize,
     loadData: loadData,
     startRenderPins: startRenderPins,
-    copyServerResponse: copyServerResponse,
     startRenderFilteredPins: startRenderFilteredPins
   };
 }());
