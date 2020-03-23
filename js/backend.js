@@ -14,15 +14,15 @@
 
   var StatusCod = {
     SUCCESS: 200,
-    ERROR: 400
+    BAD_REQUEST: 400,
+    NOT_FOUND: 404
   };
 
   var xhrHandler = function (xhr, onload, onError) {
     var contentLoadHandler = function () {
       if (xhr.status === StatusCod.SUCCESS) {
-        console.log(xhr.response);
         onload(xhr.response, IndexCard.FROM, IndexCard.TO);
-      } else {
+      } else if (xhr.status === StatusCod.BAD_REQUEST || xhr.status === StatusCod.NOT_FOUND) {
         onError();
       }
     };
@@ -30,11 +30,9 @@
     xhr.addEventListener('load', contentLoadHandler);
   };
 
-  // запрашивает карточки с сервера и выводит в дом
-
-  var loadCards = function (onload, url) {
+  var loadCards = function (onload, onError, url) {
     var xhr = new XMLHttpRequest();
-    xhrHandler(xhr, onload);
+    xhrHandler(xhr, onload, onError);
     xhr.open('GET', url);
     xhr.send();
   };
@@ -46,11 +44,9 @@
     xhr.send(data);
   };
 
-  // экспорт
-
   window.backend = {
     Url: Url,
     loadCards: loadCards,
-    postForm: postForm,
+    postForm: postForm
   };
 }());

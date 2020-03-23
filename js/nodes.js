@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  // перечисление для доступа к dom-элементам
   window.nodes = {
     CARD_TEMPLATE: document.querySelector('#card').content.querySelector('.map__card'),
     PIN_TEMPLATE: document.querySelector('#pin').content.querySelector('.map__pin'),

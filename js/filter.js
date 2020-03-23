@@ -30,10 +30,6 @@
     HIGH: 'high',
   };
 
-  var getDataSlice = function (items, index1, index2) {
-    return items.slice(index1, index2);
-  };
-
   var rangePrice = function (value) {
     if (value <= PriceRange.LOW) {
       return PriceLevel.LOW;
@@ -77,31 +73,19 @@
     return true;
   };
 
-  /* var arr1 = ['1', '2', '3'];
-
-   var arr2 = [];
-
-   console.log(arr2.length);
-
-   console.log(compareFeatures(arr1, arr2));
-
-
-   console.log(arr1.includes(''));*/
-
   var filteredByFeatures = function (data) {
     return compareFeatures(data.offer.features, getActiveCheckboxes());
   };
 
   var filterOffers = function (serverResponse) {
-    return getDataSlice(serverResponse.filter(function (data) {
+    return serverResponse.filter(function (data) {
       return filteredByTypeApart(data) && filteredByCost(data) && filteredByRoomsNumber(data) && filteredByGuestsNumber(data)
         && filteredByFeatures(data);
-    }), IndexCard.FROM, IndexCard.TO);
+    }).slice(IndexCard.FROM, IndexCard.TO);
   };
 
   var filterClickHandler = function (evt) {
     var CARDS = window.nodes.MAP.querySelectorAll('.map__card');
-    // window.util.disableElement(window.nodes.MAIN_PIN);
     if (CARDS.length > 0) {
       CARDS[0].remove();
     }
@@ -116,7 +100,6 @@
   };
 
   window.filter = {
-    getDataSlice: getDataSlice,
     filteredByTypeApart: filteredByTypeApart,
     filteredByCost: filteredByCost,
     filterClickHandler: filterClickHandler,
