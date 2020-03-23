@@ -21,7 +21,7 @@
   var activatePageWorking = function () {
     // активация страницы кликом
     window.nodes.MAIN_PIN.addEventListener('click', window.util.addMainPinHandler(startActivePageSettings,
-      window.data.MouseKey.MIDDLE, window.data.MouseKey.RIGHT));
+        window.data.MouseKey.MIDDLE, window.data.MouseKey.RIGHT));
     // активация страницы с клавиатуры
     window.nodes.MAIN_PIN.addEventListener('keydown', window.util.addMainPinHandler(startActivePageSettings));
   };

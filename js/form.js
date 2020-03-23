@@ -72,7 +72,7 @@
 
   var saveData = function () {
     window.backend.postForm(new FormData(window.nodes.FORM),
-      window.message.onSuccess, window.message.onError, window.backend.Url.POST);
+        window.message.onSuccess, window.message.onError, window.backend.Url.POST);
   };
 
   var formSubmitHandler = function (evt) {
