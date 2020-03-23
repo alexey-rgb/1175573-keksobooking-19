@@ -1,8 +1,6 @@
 'use strict';
 
 (function () {
-  // объявляем константы перечисления, массивы
-
   var NUMBER_FOR_COUNT = 0.5;
   var OBJECT_NUMBER = 8;
   var Value = {
@@ -74,17 +72,20 @@
 
   var PinPixelSize = 50;
 
-  // размер пина в процентах
-
   var PIN_PERCENT_SIZE = (PinPixelSize * MaxMapWidth.PERCENT) / MaxMapWidth.PIXEL;
 
   var PINS;
 
   var copyServerResponse = [];
 
-  var getRenderPins = function (items, index1, index2) {
+  var IndexCard = {
+    FROM: 0,
+    TO: 5
+  };
+
+  var getRenderPins = function (items) {
     copyServerResponse = items.slice();
-    window.nodes.MAP.appendChild(window.pin.renderPins(window.filter.getDataSlice(items, index1, index2)));
+    window.nodes.MAP.appendChild(window.pin.renderPins(items.slice(IndexCard.FROM, IndexCard.TO)));
   };
 
   var renderFilteredPins = function () {
@@ -95,7 +96,7 @@
     if (copyServerResponse.length > 0) {
       return;
     }
-    window.backend.loadCards(getRenderPins, window.backend.Url.GET);
+    window.backend.loadCards(getRenderPins, window.message.onError2, window.backend.Url.GET);
   };
 
   var setFilter = function () {
@@ -111,10 +112,9 @@
   };
 
   var loadData = function (fun) {
+    window.form.inputGuestsChangeNumberHandler();
     window.util.mainPinHandlers(fun);
   };
-
-  // Экспорт
 
   window.data = {
     NUMBER_FOR_COUNT: NUMBER_FOR_COUNT,
@@ -132,11 +132,10 @@
     Position: Position,
     LengthSymbol: LengthSymbol,
     MouseKey: MouseKey,
-    // mockData: mockData,
     PIN_PERCENT_SIZE: PIN_PERCENT_SIZE,
     PinPixelSize: PinPixelSize,
     loadData: loadData,
     startRenderPins: startRenderPins,
-    startRenderFilteredPins: startRenderFilteredPins,
+    startRenderFilteredPins: startRenderFilteredPins
   };
 }());

@@ -19,8 +19,6 @@
 
   Object.freeze(enumList);
 
-  // Ограничения рабочей области карты
-
   var LOCATION = {
     X_MIN: 0,
     X_MAX: getMapWidth(),
@@ -28,16 +26,12 @@
     Y_MAX: 630
   };
 
-  // Ограничения для перемещения главной метки
-
   var limitMainPin = {
     left: LOCATION.X_MIN - (enumList.getMainPinWidth() / 2),
     right: LOCATION.X_MAX - (enumList.getMainPinWidth() / 2),
     top: LOCATION.Y_MIN - enumList.getMainPinHeight() - window.data.Pin.PSEUDO,
     bottom: LOCATION.Y_MAX - enumList.getMainPinHeight() - window.data.Pin.PSEUDO
   };
-
-  // Проверка области перемещения
 
   var getLeftPosition = function () {
     var result;
@@ -105,8 +99,6 @@
       document.addEventListener('mouseup', mainPinMouseUpHandler);
     }
   };
-
-  // прослушка события на главной метке
 
   window.nodes.MAIN_PIN.addEventListener('mousedown', mainPinMouseDownHandler);
 }());

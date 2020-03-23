@@ -2,11 +2,11 @@
 
 (function () {
 
+  var DEBOUNCE_INTERVAL = 500;
+
   var getRandomBetween = function (min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
   };
-
-  // создаем функции, для получения прозвольных значений свойств объекта(описание объявления)
 
   var getRandomItem = function (items) {
     return items[getRandomBetween(0, items.length - 1)];
@@ -15,8 +15,6 @@
   var getRandomNumber = function () {
     return getRandomBetween(0, 2);
   };
-
-  // Получение произвольного массива методом filter c проверкой
 
   var getRandomItems2 = function (items) {
     var randomItems = items.filter(getRandomNumber);
@@ -47,7 +45,7 @@
 
   var addMainPinHandler = function (fun, MouseKey1, MouseKey2) {
     return mainPinClickHandler('click', window.nodes.MAIN_PIN.disable, fun,
-      MouseKey1, MouseKey2);
+        MouseKey1, MouseKey2);
   };
 
   var addMainPinKeyHandler = function (func) {
@@ -56,8 +54,21 @@
 
   var mainPinHandlers = function (renderCards) {
     return addHandlers(window.nodes.MAIN_PIN, 'click', 'keydown',
-      addMainPinHandler(renderCards, window.data.MouseKey.MIDDLE, window.data.MouseKey.RIGHT),
-      addMainPinKeyHandler(renderCards));
+        addMainPinHandler(renderCards, window.data.MouseKey.MIDDLE, window.data.MouseKey.RIGHT),
+        addMainPinKeyHandler(renderCards));
+  };
+
+  var debounce = function (cb) {
+    var lastTimeout = null;
+    return function () {
+      var parameters = arguments;
+      if (lastTimeout) {
+        clearTimeout(lastTimeout);
+      }
+      lastTimeout = setTimeout(function () {
+        cb.apply(null, parameters);
+      }, DEBOUNCE_INTERVAL);
+    };
   };
 
   window.util = {
@@ -65,8 +76,11 @@
     getRandomItems2: getRandomItems2,
     getRandomBetween: getRandomBetween,
     addHandlers: addHandlers,
+    mainPinClickHandler: mainPinClickHandler,
+    mainPinKeyDownHandler: mainPinKeyDownHandler,
     addMainPinHandler: addMainPinHandler,
     addMainPinKeyHandler: addMainPinKeyHandler,
-    mainPinHandlers: mainPinHandlers
+    mainPinHandlers: mainPinHandlers,
+    debounce: debounce
   };
 }());
