@@ -39,35 +39,26 @@
 
   // Проверка области перемещения
 
-  var setDefaultPosition = function () {
+  var getLeftPosition = function () {
     var result;
-    if (window.nodes.MAIN_PIN.offsetLeft === limitMainPin.left) {
+    if (window.nodes.MAIN_PIN.offsetLeft < limitMainPin.left) {
       result = limitMainPin.left + 'px';
-    } else if (window.nodes.MAIN_PIN.offsetLeft === limitMainPin.right) {
+    }
+    if (window.nodes.MAIN_PIN.offsetLeft > limitMainPin.right) {
       result = limitMainPin.right + 'px';
     }
     return result;
   };
 
-  var getLeftPosition = function () {
-    if (window.nodes.MAIN_PIN.offsetLeft <= limitMainPin.left) {
-      return limitMainPin.left + 'px';
-    }
-    if (window.nodes.MAIN_PIN.offsetLeft >= limitMainPin.right) {
-      return limitMainPin.right + 'px';
-    }
-    return setDefaultPosition();
-  };
-
   var getTopPosition = function () {
-
-    if (window.nodes.MAIN_PIN.offsetTop <= limitMainPin.top) {
-      return limitMainPin.top + 'px';
+    var result;
+    if (window.nodes.MAIN_PIN.offsetTop < limitMainPin.top) {
+      result = limitMainPin.top + 'px';
     }
-    if (window.nodes.MAIN_PIN.offsetTop >= limitMainPin.bottom) {
-      return limitMainPin.bottom + 'px';
+    if (window.nodes.MAIN_PIN.offsetTop > limitMainPin.bottom) {
+      result = limitMainPin.bottom + 'px';
     }
-    return setDefaultPosition();
+    return result;
   };
 
   var checkLimitMainPinCoordinates = function (leftPosition, topPosition) {

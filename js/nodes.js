@@ -29,6 +29,7 @@
     ERROR_MESSAGE_TEMPLATE: document.querySelector('#error').content,
     BODY: document.querySelector('body'),
     MAIN: document.querySelector('main'),
-    BUTTON_RESET_FORM: document.querySelector('.ad-form__reset')
+    BUTTON_RESET_FORM: document.querySelector('.ad-form__reset'),
+    FORM_FILTER: document.querySelector('.map__filters')
   };
 }());
