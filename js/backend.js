@@ -22,7 +22,7 @@
     var contentLoadHandler = function () {
       if (xhr.status === StatusCod.SUCCESS) {
         onload(xhr.response, IndexCard.FROM, IndexCard.TO);
-      } else if (xhr.status === StatusCod.BAD_REQUEST || xhr.status === StatusCod.NOT_FOUND) {
+      } else if (xhr.status === StatusCod.BAD_REQUEST || xhr.status === StatusCod.NOT_FOUND || xhr.status !== StatusCod.SUCCESS) {
         onError();
       }
     };

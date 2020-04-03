@@ -2,7 +2,7 @@
 
 (function () {
   var renderOffers = function () {
-    window.addEventListener('load', window.data.loadData(window.data.startRenderPins));
+    window.addEventListener('load', window.pin.loadDataHandler);
   };
   renderOffers();
 }());

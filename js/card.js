@@ -6,12 +6,11 @@
 
   var getButtonCloseHandler = function (element) {
     return function (evt) {
-      var activePins = document.querySelectorAll('[type]');
+      window.ACTIVE_PIN = document.querySelector('.map__pin--active');
       if (evt.key === 'Escape' || evt.button === 0) {
         element.remove();
-        activePins.forEach(function (button) {
-          button.classList.remove('map__pin--active');
-        });
+        window.ACTIVE_PIN.classList.remove('map__pin--active');
+        window.pin.COUNTERS.pop();
       }
     };
   };
@@ -70,6 +69,6 @@
   };
 
   window.card = {
-    renderCard: renderCard,
+    renderCard: renderCard
   };
 }());

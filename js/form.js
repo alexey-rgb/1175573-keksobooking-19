@@ -36,7 +36,12 @@
     });
   };
 
-  var inputGuestsChangeNumberHandler2 = function () {
+  var buttonResetHandler = function () {
+    window.nodes.FORM.reset();
+    window.filter.setDefaultFiltersValue();
+  };
+
+  var buttonClickHandler = function () {
     var message = window.nodes.ROOM_NUMBER.value !== window.nodes.CAPACITY.value
       ? 'кол-во гостей ограничено' : '';
     window.nodes.CAPACITY.setCustomValidity(message);
@@ -53,6 +58,7 @@
     if (evt.target === window.nodes.TYPE) {
       window.nodes.PRICE_INPUT.placeholder = window.data.ROOM_DATA[window.nodes.TYPE.value].price;
       window.nodes.PRICE_INPUT.min = window.data.ROOM_DATA[window.nodes.TYPE.value].price;
+      window.nodes.PRICE_INPUT.value = '';
     }
   };
 
@@ -72,7 +78,7 @@
 
   var saveData = function () {
     window.backend.postForm(new FormData(window.nodes.FORM),
-        window.message.onSuccess, window.message.onError, window.backend.Url.POST);
+      window.message.renderSuccessMessage, window.message.renderErrorMessage, window.backend.Url.POST);
   };
 
   var formSubmitHandler = function (evt) {
@@ -84,8 +90,6 @@
 
   window.nodes.FORM.addEventListener('submit', formSubmitHandler);
 
-  window.nodes.FORM.addEventListener('submit', formSubmitHandler);
-
   window.form = {
     MAIN_PIN_POSITION: MAIN_PIN_POSITION,
     fixAddressValue: fixAddressValue,
@@ -94,6 +98,7 @@
     inputApartChangeTypeHandler: inputApartChangeTypeHandler,
     setTimeChangeHandler: setTimeChangeHandler,
     setFieldsetCondition: setFieldsetCondition,
-    inputGuestsChangeNumberHandler2: inputGuestsChangeNumberHandler2
+    buttonClickHandler: buttonClickHandler,
+    buttonResetHandler: buttonResetHandler
   };
 }());

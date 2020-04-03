@@ -15,7 +15,7 @@
     PRICE_INPUT: document.querySelector('#price'),
     TIME_IN: document.querySelector('#timein'),
     TIME_OUT: document.querySelector('#timeout'),
-    FIELDSET: document.querySelectorAll('.ad-form__element'),
+    FIELDSET: document.querySelectorAll('.ad-form__element, .ad-form-header, .map__features, .map__filter'),
     POPUP_PHOTO: document.querySelector('.popup__photo'),
     FEATURES: document.querySelector('#card').content.querySelector('.popup__features'),
     POPUP_PHOTOS: document.querySelector('#card').content.querySelector('.popup__photos'),

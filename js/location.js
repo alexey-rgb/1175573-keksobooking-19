@@ -8,7 +8,7 @@
     return MAP_WRAPPER.offsetWidth;
   };
 
-  var enumList = {
+  var mainPinSize = {
     getMainPinWidth: function () {
       return window.nodes.MAIN_PIN.offsetWidth;
     },
@@ -17,7 +17,7 @@
     }
   };
 
-  Object.freeze(enumList);
+  Object.freeze(mainPinSize);
 
   var LOCATION = {
     X_MIN: 0,
@@ -26,66 +26,112 @@
     Y_MAX: 630
   };
 
-  var limitMainPin = {
-    left: LOCATION.X_MIN - (enumList.getMainPinWidth() / 2),
-    right: LOCATION.X_MAX - (enumList.getMainPinWidth() / 2),
-    top: LOCATION.Y_MIN - enumList.getMainPinHeight() - window.data.Pin.PSEUDO,
-    bottom: LOCATION.Y_MAX - enumList.getMainPinHeight() - window.data.Pin.PSEUDO
+  var LimitMainPinCoordinate = {
+    LEFT: LOCATION.X_MIN - (mainPinSize.getMainPinWidth() / 2),
+    RIGHT: LOCATION.X_MAX - (mainPinSize.getMainPinWidth() / 2),
+    TOP: LOCATION.Y_MIN - mainPinSize.getMainPinHeight() - window.data.Pin.PSEUDO,
+    BOTTOM: LOCATION.Y_MAX - mainPinSize.getMainPinHeight() - window.data.Pin.PSEUDO
   };
 
-  var getLeftPosition = function () {
-    var result;
-    if (window.nodes.MAIN_PIN.offsetLeft < limitMainPin.left) {
-      result = limitMainPin.left + 'px';
-    }
-    if (window.nodes.MAIN_PIN.offsetLeft > limitMainPin.right) {
-      result = limitMainPin.right + 'px';
-    }
-    return result;
+  var Coordinates = function (x, y) {
+    this.x = x;
+    this.y = y;
   };
 
-  var getTopPosition = function () {
-    var result;
-    if (window.nodes.MAIN_PIN.offsetTop < limitMainPin.top) {
-      result = limitMainPin.top + 'px';
-    }
-    if (window.nodes.MAIN_PIN.offsetTop > limitMainPin.bottom) {
-      result = limitMainPin.bottom + 'px';
-    }
-    return result;
+  Coordinates.prototype.setXY = function (x, y) {
+    this.x = x;
+    this.y = y;
   };
+
+  /* var compareLimitPosition = function (coordinate, max, min) {
+     if (coordinate > max) {
+       return max;
+     } else if (coordinate < min) {
+       return min;
+     }
+     return coordinate;
+   };*/
+
+  // в переменной будут храниться актуальные координаты пина в случае равенства текущих координат и лимитов перемещения метки
+
+  var resultEquality;
+
+  // возвращает актуальные координаты в случае если текущие координаты и лимиты перемещения равны
+
+  var setPositionEquality = function (currentPosition, limitPosition1, limitPosition2) {
+    if (currentPosition === limitPosition1) {
+      resultEquality = limitPosition1 + 'px';
+    } else if (currentPosition === limitPosition2) {
+      resultEquality = limitPosition2 + 'px';
+    }
+    return resultEquality;
+  };
+
+  // Прототип - возвращает актуальные координаты(X/Y) в случае если текущие координаты выходят за лимиты перемещения
+  // или равенства этих значений
+
+  var EqualityPosition = {
+    constructor: function (limitPosition1, limitPosition2) {
+      this.limit1 = limitPosition1;
+      this.limit2 = limitPosition2;
+      return this;
+    },
+    setPosition(currentPosition) {
+      if (currentPosition < this.limit1) {
+        return this.limit1 + 'px';
+      } else if (currentPosition > this.limit2) {
+        return this.limit2 + 'px';
+      }
+      setPositionEquality(currentPosition, this.limit1, this.limit2);
+    }
+  };
+
+  // создаем потомков для описания позиции главной метки по X/Y, в случае ее выхода за лимиты или в случае равенства значений.
+
+  var getLeftPosition = Object.create(EqualityPosition);
+  var getTopPosition = Object.create(EqualityPosition);
+
+  // записываем лимиты на перемещение главной метки в объекты-копии
+
+  getLeftPosition.constructor(LimitMainPinCoordinate.LEFT, LimitMainPinCoordinate.RIGHT);
+  getTopPosition.constructor(LimitMainPinCoordinate.TOP, LimitMainPinCoordinate.BOTTOM);
+
+  // записывает актуальные координаты в css, в случае выхода метки за пределы лимита или равенства значений.
 
   var checkLimitMainPinCoordinates = function (leftPosition, topPosition) {
-    window.nodes.MAIN_PIN.style.left = getLeftPosition(leftPosition);
-    window.nodes.MAIN_PIN.style.top = getTopPosition(topPosition);
+    window.nodes.MAIN_PIN.style.left = getLeftPosition.setPosition(leftPosition);
+    window.nodes.MAIN_PIN.style.top = getTopPosition.setPosition(topPosition);
   };
 
   var mainPinMouseDownHandler = function (evt) {
     if (evt.buttons === 1) {
       evt.preventDefault();
 
-      var startCoordinates = {
-        x: evt.clientX,
-        y: evt.clientY
-      };
+      var startCoordinates = new Coordinates(evt.clientX, evt.clientY);
 
       var mainPinMouseMoveHandler = function (moveEvt) {
         moveEvt.preventDefault();
 
-        var shift = {
-          x: startCoordinates.x - moveEvt.clientX,
-          y: startCoordinates.y - moveEvt.clientY
-        };
+        var shift = new Coordinates(startCoordinates.x - moveEvt.clientX, startCoordinates.y - moveEvt.clientY);
 
-        startCoordinates = {
-          x: moveEvt.clientX,
-          y: moveEvt.clientY
-        };
+        startCoordinates.setXY(moveEvt.clientX, moveEvt.clientY);
+
+        // var position = ;
+
+        /* var actualCoordinates = new Coordinates(compareLimitPosition(window.nodes.MAIN_PIN.offsetLeft - shift.x,
+           LimitMainPinCoordinate.RIGHT, LimitMainPinCoordinate.LEFT), compareLimitPosition(window.nodes.MAIN_PIN.offsetTop
+           - shift.y, LimitMainPinCoordinate.BOTTOM, LimitMainPinCoordinate.TOP));
+         window.nodes.MAIN_PIN.style.left = actualCoordinates.x + 'px';
+         window.nodes.MAIN_PIN.style.top = actualCoordinates.y + 'px';*/
 
         window.nodes.MAIN_PIN.style.left = window.nodes.MAIN_PIN.offsetLeft - shift.x + 'px';
         window.nodes.MAIN_PIN.style.top = window.nodes.MAIN_PIN.offsetTop - shift.y + 'px';
 
-        checkLimitMainPinCoordinates(window.nodes.MAIN_PIN.offsetLeft, window.nodes.MAIN_PIN.offsetTop);
+        // вызов функции , которая записывает актуальные координаты в css, в случае выхода метки за пределы лимита или равенства.
+
+        checkLimitMainPinCoordinates(window.nodes.MAIN_PIN.offsetLeft - shift.x,
+          window.nodes.MAIN_PIN.offsetTop - shift.y);
+
         window.nodes.INPUT_ADDRESS.value = (window.nodes.MAIN_PIN.offsetTop - shift.y)
           + ',' + (window.nodes.MAIN_PIN.offsetLeft - shift.x);
       };

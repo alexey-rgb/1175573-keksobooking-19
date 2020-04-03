@@ -74,48 +74,6 @@
 
   var PIN_PERCENT_SIZE = (PinPixelSize * MaxMapWidth.PERCENT) / MaxMapWidth.PIXEL;
 
-  var PINS;
-
-  var copyServerResponse = [];
-
-  var IndexCard = {
-    FROM: 0,
-    TO: 5
-  };
-
-  var getRenderPins = function (items) {
-    copyServerResponse = items.slice();
-    window.nodes.MAP.appendChild(window.pin.renderPins(items.slice(IndexCard.FROM, IndexCard.TO)));
-  };
-
-  var renderFilteredPins = function () {
-    window.nodes.MAP.appendChild(window.pin.renderPins(window.filter.filterOffers(copyServerResponse)));
-  };
-
-  var startRenderPins = function () {
-    if (copyServerResponse.length > 0) {
-      return;
-    }
-    window.backend.loadCards(getRenderPins, window.message.onError2, window.backend.Url.GET);
-  };
-
-  var setFilter = function () {
-    PINS.forEach(function (pin) {
-      pin.remove();
-    });
-    renderFilteredPins();
-  };
-
-  var startRenderFilteredPins = function (evt) {
-    PINS = window.nodes.MAP.querySelectorAll('button[type="button"]');
-    setFilter(evt);
-  };
-
-  var loadData = function (fun) {
-    window.form.inputGuestsChangeNumberHandler();
-    window.util.mainPinHandlers(fun);
-  };
-
   window.data = {
     NUMBER_FOR_COUNT: NUMBER_FOR_COUNT,
     OBJECT_NUMBER: OBJECT_NUMBER,
@@ -134,8 +92,5 @@
     MouseKey: MouseKey,
     PIN_PERCENT_SIZE: PIN_PERCENT_SIZE,
     PinPixelSize: PinPixelSize,
-    loadData: loadData,
-    startRenderPins: startRenderPins,
-    startRenderFilteredPins: startRenderFilteredPins
   };
 }());

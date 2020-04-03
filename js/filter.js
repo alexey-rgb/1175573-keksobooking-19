@@ -4,7 +4,8 @@
 
   var Nodes = {
     FEATURES: document.querySelector('#housing-features'),
-    FILTERS: document.querySelectorAll('.map__filter, input[type="checkbox"]'),
+    FILTERS: document.querySelectorAll('.map__filter'),
+    CHECKBOXES: document.querySelectorAll('.map__filter, input[type="checkbox"]'),
     FILTER_CONTAINER: document.querySelector('.map__filters-container'),
     HOUSING_TYPE: document.querySelector('#housing-type'),
     HOUSING_PRICE: document.querySelector('#housing-price'),
@@ -85,17 +86,25 @@
   };
 
   var filterClickHandler = function (evt) {
+    var PINS = window.nodes.MAP.querySelectorAll('button[type="button"]');
     var CARDS = window.nodes.MAP.querySelectorAll('.map__card');
     if (CARDS.length > 0) {
       CARDS[0].remove();
     }
-    return window.data.startRenderFilteredPins(evt);
+    PINS.forEach(function (pin) {
+      pin.remove();
+    });
+    window.pin.COUNTERS.pop();
+    window.pin.renderFilteredPins(evt);
   };
 
   var setDefaultFiltersValue = function () {
     Nodes.FILTERS.forEach(function (item) {
       item.checked = false;
       item.value = DEFAULT_VALUE;
+    });
+    Nodes.CHECKBOXES.forEach(function (item) {
+      item.checked = false;
     });
   };
 
