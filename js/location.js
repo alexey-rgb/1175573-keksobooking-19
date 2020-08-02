@@ -26,11 +26,19 @@
     Y_MAX: 630
   };
 
+  var getHalfSizeMainPin = function () {
+   return mainPinSize.getMainPinWidth() / 2;
+  };
+
+  var getMainPinSizeMinusPseudoElSize = function () {
+    return mainPinSize.getMainPinHeight() - window.data.Pin.PSEUDO;
+  };
+
   var LimitMainPinCoordinate = {
-    LEFT: LOCATION.X_MIN - (mainPinSize.getMainPinWidth() / 2),
-    RIGHT: LOCATION.X_MAX - (mainPinSize.getMainPinWidth() / 2),
-    TOP: LOCATION.Y_MIN - mainPinSize.getMainPinHeight() - window.data.Pin.PSEUDO,
-    BOTTOM: LOCATION.Y_MAX - mainPinSize.getMainPinHeight() - window.data.Pin.PSEUDO
+    LEFT: LOCATION.X_MIN - getHalfSizeMainPin(),
+    RIGHT: LOCATION.X_MAX - getHalfSizeMainPin(),
+    TOP: LOCATION.Y_MIN - getMainPinSizeMinusPseudoElSize(),
+    BOTTOM: LOCATION.Y_MAX - getMainPinSizeMinusPseudoElSize()
   };
 
   var Coordinates = function (x, y) {
@@ -43,26 +51,16 @@
     this.y = y;
   };
 
-  /* var compareLimitPosition = function (coordinate, max, min) {
-     if (coordinate > max) {
-       return max;
-     } else if (coordinate < min) {
-       return min;
-     }
-     return coordinate;
-   };*/
+  // в переменной будут храниться актуальные координаты пина в случае равенства текущих координат
+  // и лимитов перемещения метки
 
-  // в переменной будут храниться актуальные координаты пина в случае равенства текущих координат и лимитов перемещения метки
-
-  var resultEquality;
+    var resultEquality;
 
   // возвращает актуальные координаты в случае если текущие координаты и лимиты перемещения равны
 
-  var setPositionEquality = function (currentPosition, limitPosition1, limitPosition2) {
-    if (currentPosition === limitPosition1) {
-      resultEquality = limitPosition1 + 'px';
-    } else if (currentPosition === limitPosition2) {
-      resultEquality = limitPosition2 + 'px';
+    var setPositionEquality = function (currentPosition, limitPosition1, limitPosition2) {
+    if (currentPosition === limitPosition1 || currentPosition === limitPosition2) {
+      resultEquality = currentPosition + 'px';
     }
     return resultEquality;
   };
@@ -71,6 +69,7 @@
   // или равенства этих значений
 
   var EqualityPosition = {
+
     constructor: function (limitPosition1, limitPosition2) {
       this.limit1 = limitPosition1;
       this.limit2 = limitPosition2;
@@ -82,7 +81,7 @@
       } else if (currentPosition > this.limit2) {
         return this.limit2 + 'px';
       }
-      setPositionEquality(currentPosition, this.limit1, this.limit2);
+       setPositionEquality(currentPosition, this.limit1, this.limit2);
     }
   };
 
@@ -116,20 +115,12 @@
 
         startCoordinates.setXY(moveEvt.clientX, moveEvt.clientY);
 
-        // var position = ;
-
-        /* var actualCoordinates = new Coordinates(compareLimitPosition(window.nodes.MAIN_PIN.offsetLeft - shift.x,
-           LimitMainPinCoordinate.RIGHT, LimitMainPinCoordinate.LEFT), compareLimitPosition(window.nodes.MAIN_PIN.offsetTop
-           - shift.y, LimitMainPinCoordinate.BOTTOM, LimitMainPinCoordinate.TOP));
-         window.nodes.MAIN_PIN.style.left = actualCoordinates.x + 'px';
-         window.nodes.MAIN_PIN.style.top = actualCoordinates.y + 'px';*/
-
-        window.nodes.MAIN_PIN.style.left = window.nodes.MAIN_PIN.offsetLeft - shift.x + 'px';
+         window.nodes.MAIN_PIN.style.left = window.nodes.MAIN_PIN.offsetLeft - shift.x + 'px';
         window.nodes.MAIN_PIN.style.top = window.nodes.MAIN_PIN.offsetTop - shift.y + 'px';
 
         // вызов функции , которая записывает актуальные координаты в css, в случае выхода метки за пределы лимита или равенства.
 
-        checkLimitMainPinCoordinates(window.nodes.MAIN_PIN.offsetLeft - shift.x,
+         checkLimitMainPinCoordinates(window.nodes.MAIN_PIN.offsetLeft - shift.x,
           window.nodes.MAIN_PIN.offsetTop - shift.y);
 
         window.nodes.INPUT_ADDRESS.value = (window.nodes.MAIN_PIN.offsetTop - shift.y)
@@ -147,4 +138,5 @@
   };
 
   window.nodes.MAIN_PIN.addEventListener('mousedown', mainPinMouseDownHandler);
+
 }());

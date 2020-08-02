@@ -3,8 +3,8 @@
 (function () {
 
   var Url = {
-    GET: 'https://js.dump.academy/keksobooking/data',
-    POST: 'https://js.dump.academy/keksobooking'
+    GET: 'https://javascript.pages.academy/keksobooking/data',
+    POST: 'https://javascript.pages.academy/keksobooking'
   };
 
   var IndexCard = {
@@ -22,7 +22,9 @@
     var contentLoadHandler = function () {
       if (xhr.status === StatusCod.SUCCESS) {
         onload(xhr.response, IndexCard.FROM, IndexCard.TO);
-      } else if (xhr.status === StatusCod.BAD_REQUEST || xhr.status === StatusCod.NOT_FOUND || xhr.status !== StatusCod.SUCCESS) {
+      } else if (xhr.status === StatusCod.BAD_REQUEST
+         || xhr.status === StatusCod.NOT_FOUND
+         || xhr.status !== StatusCod.SUCCESS) {
         onError();
       }
     };

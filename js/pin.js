@@ -8,7 +8,7 @@
 
   var PIN_POSITION_FORMULA = (window.data.PIN_PERCENT_SIZE * window.data.NUMBER_FOR_COUNT);
 
-  // позволяет передавать/снимать подсветку(css) активного пина другому пину, в случае клика по нему.
+  // позволяет передавать/снимать подсветку(css) активного пина другому пину, в смены активного пина.
 
   var toggleActiveClass = function (node, clone) {
     if (COUNTERS.includes('')) {
@@ -19,16 +19,16 @@
     COUNTERS.push('');
   };
 
-  var renderPin = function (item) {
+  var preparePin = function (item) {
     var getNewCard = window.card.renderCard(item);
     var pinClickHandler = function () {
-      window.ACTIVE_PIN = document.querySelector('.map__pin--active');
+    var ACTIVE_PIN = document.querySelector('.map__pin--active');
       var cards = window.nodes.MAP.querySelectorAll('.map__card');
       if (cards.length > 0) {
         cards[0].remove();
       }
       window.nodes.MAP.appendChild(getNewCard);
-      toggleActiveClass(window.ACTIVE_PIN, pinElement);
+      toggleActiveClass(ACTIVE_PIN, pinElement);
     };
     var pinElement = window.nodes.PIN_TEMPLATE.cloneNode(true);
     var pinImage = pinElement.querySelector('img');
@@ -41,10 +41,10 @@
     return pinElement;
   };
 
-  var renderPins = function (items) {
+  var addFuturePinsToFragment = function (items) {
     var fragment1 = document.createDocumentFragment();
     items.forEach(function (item) {
-      fragment1.appendChild(renderPin(item));
+      fragment1.appendChild(preparePin(item));
     });
     return fragment1;
   };
@@ -53,7 +53,7 @@
     window.nodes.MAP.appendChild(window.pin.renderPins(window.filter.filterOffers(copyServerResponse)));
   };
 
-  var getRenderPins = function (items, index1, index2) {
+  var renderPins = function (items, index1, index2) {
     copyServerResponse = items.slice();
     window.nodes.MAP.appendChild(window.pin.renderPins(copyServerResponse.slice(index1, index2)));
   };
@@ -63,21 +63,22 @@
     var PIN = document.querySelector('button[type="button"]');
     // проверка необходима, что главная метка не реагировала на повторный клик
     if (!PIN) {
-      window.backend.loadCards(getRenderPins, window.message.insertErrorMessage, window.backend.Url.GET);
+      window.backend.loadCards(renderPins, window.message.insertErrorMessage, window.backend.Url.GET);
     }
   };
 
-  function setRenderOffers(dataRequest) {
+  function addMainPinHandlerSetFieldGuests(dataRequest) {
     window.form.inputGuestsChangeNumberHandler();
     window.handlers.mainPinHandlers(dataRequest);
   }
 
-  var loadDataHandler = () => setRenderOffers(requestData);
+  var loadDataHandler = () => addMainPinHandlerSetFieldGuests(requestData);
 
   window.pin = {
-    renderPins: renderPins,
+    renderPins:  addFuturePinsToFragment,
     COUNTERS: COUNTERS,
     renderFilteredPins: renderFilteredPins,
-    loadDataHandler: loadDataHandler
+    loadDataHandler: loadDataHandler,
+    requestData: requestData
   };
 }());

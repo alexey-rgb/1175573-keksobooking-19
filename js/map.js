@@ -2,6 +2,13 @@
 
 (function () {
 
+  // Проверить после восстановления сервера
+
+  var StartMainPinCoordinates = {
+    Y: 375,
+    X: 570
+  }
+
   var startActivePageSettings = function () {
     window.nodes.FORM.classList.remove('ad-form--disabled');
     window.form.setFieldsetCondition(window.nodes.FIELDSET, true);
@@ -19,7 +26,9 @@
   };
 
   var afterSuccessMessageSettings = function () {
-    var BUTTONS = document.querySelectorAll('button[type="button"]');
+    // Проверить после востановления сервера
+    var BUTTONS = window.nodes.MAP.querySelectorAll('button[type="button"]');
+    /*var BUTTONS = document.querySelectorAll('button[type="button"]');*/
     window.nodes.FORM.reset();
     window.nodes.FORM.classList.add('ad-form--disabled');
     window.form.setFieldsetCondition(window.nodes.FIELDSET, false);
@@ -27,7 +36,9 @@
     BUTTONS.forEach(function (button) {
       button.remove();
     });
-    window.nodes.MAIN_PIN.style = 'left: 570px; top: 375px;';
+    // Проверить после восстановления сервера
+    window.nodes.MAIN_PIN.style = 'left: ' + StartMainPinCoordinates.X
+      + 'px; top: ' + StartMainPinCoordinates.Y + 'px;';
     window.filter.setDefaultFiltersValue();
     window.filter.Nodes.FILTER_CONTAINER.removeEventListener('change', window.filter.filterClickHandler);
     window.nodes.BUTTON_SUBMIT.removeEventListener('click', window.form.buttonClickHandler);
@@ -40,19 +51,10 @@
     window.prewieInstallImages.addHandlers();
   };
 
-  var activatePageWorking = function () {
-    // активация страницы кликом
-    window.nodes.MAIN_PIN.addEventListener('click', window.handlers.addMainPinHandler(startActivePageSettings,
-      window.data.MouseKey.MIDDLE, window.data.MouseKey.RIGHT));
-    // активация страницы с клавиатуры
-    window.nodes.MAIN_PIN.addEventListener('keydown', window.handlers.addMainPinHandler(startActivePageSettings));
-  };
-
-  activatePageWorking();
-
   window.form.fixAddressValue();
 
   window.map = {
-    afterSuccessMessageSettings: afterSuccessMessageSettings
+    afterSuccessMessageSettings: afterSuccessMessageSettings,
+    startActivePageSettings: startActivePageSettings
   };
 }());

@@ -2,62 +2,78 @@
 
 (function () {
 
-  var IMAGE_TYPE = ['jpeg', 'png', 'gif', 'heic', 'webp'];
+  var IMAGE_TYPE = ['jpg', 'jpeg', 'png', 'gif', 'heic', 'webp'];
 
-  var AVATAR_LOADER = window.nodes.FORM.querySelector('.ad-form-header__input');
+  var form = window.nodes.FORM;
 
-  var USER_AVATAR = window.nodes.FORM.querySelector('.ad-form-header__preview img');
+  var Nodes = {
 
-  var PHOTO_APARTMENTS_LOADER = window.nodes.FORM.querySelector('.ad-form__input');
+  AVATAR_LOADER: form.querySelector('.ad-form-header__input'),
 
-  var PHOTO_APARTMENTS_WRAPPER = window.nodes.FORM.querySelector('.ad-form__photo');
+  USER_AVATAR: form.querySelector('.ad-form-header__preview img'),
 
-  var PHOTO_APARTMENTS = document.createElement('img');
+  PHOTO_APARTMENTS_LOADER: form.querySelector('.ad-form__input'),
+
+  PHOTO_APARTMENTS_WRAPPER: form.querySelector('.ad-form__photo'),
+
+  PHOTO_APARTMENTS: document.createElement('img')
+
+  };
+
+  var size = 70;
 
   var readerAvatar = new FileReader();
-
-  var readerPhotoApartments = new FileReader();
 
   // записывает в src путь к загруженной пользователем аватарке
 
   var userAvatarLoadHandler = function () {
-    USER_AVATAR.src = readerAvatar.result;
+    Nodes.USER_AVATAR.src = readerAvatar.result;
   };
 
-  // записывает в src путь к загрузочной пользователем фото апартаментов
+  var readerPhotoApartments = new FileReader();
+
+  // записывает в src путь к загруженной пользователем фото недвижимости
 
   var photoApartmentsLoadHandler = function () {
-    PHOTO_APARTMENTS.style = 'width: 70px; height: 70px;';
-    PHOTO_APARTMENTS.src = readerPhotoApartments.result;
-    PHOTO_APARTMENTS_WRAPPER.insertAdjacentElement('afterbegin', PHOTO_APARTMENTS);
+    Nodes.PHOTO_APARTMENTS.style = 'width: ' + size + 'px; ' +  'height: ' + size + 'px;';
+    Nodes.PHOTO_APARTMENTS.src = readerPhotoApartments.result;
+    Nodes.PHOTO_APARTMENTS_WRAPPER.insertAdjacentElement('afterbegin', Nodes.PHOTO_APARTMENTS);
   };
 
-  //  раскодирует загруженную пользователем картинку и передает в рендер
+  //  раскодирует загруженную пользователем аватарку и передает в рендер
 
-  function avatarLoadHandler(element, reader, handler) {
-    return function imageLoadHandler() {
-      var file = element.files[0];
-      var fileName = file.name.toLowerCase();
-      var rightFile = IMAGE_TYPE.some(type => fileName.endsWith(type));
-      if (rightFile) {
-        reader.addEventListener('load', handler);
-        reader.readAsDataURL(file);
-      }
+  var avatarLoadHandler = function () {
+    var file = Nodes.AVATAR_LOADER.files[0];
+    var fileName = file.name.toLowerCase();
+    var rightFile = IMAGE_TYPE.some(type => fileName.endsWith(type));
+    if (rightFile) {
+      readerAvatar.addEventListener('load', userAvatarLoadHandler);
+      readerAvatar.readAsDataURL(file);
     }
   }
 
-  // навешивает/снимает обработчики, которые отрабатывают в случае передачи в аргумнет true.
-  // в противном случае снимает
+  //  раскодирует загруженную пользователем фотографию недвижимости и передает в рендер
+
+  var photoAppartmentLoadHandler = function () {
+    var file = Nodes.PHOTO_APARTMENTS_LOADER.files[0];
+    var fileName = file.name.toLowerCase();
+    var rightFile = IMAGE_TYPE.some(type => fileName.endsWith(type));
+    if (rightFile) {
+      readerPhotoApartments.addEventListener('load', photoApartmentsLoadHandler);
+      readerPhotoApartments.readAsDataURL(file);
+    }
+  }
+
+  // навешивает/снимает обработчики, в зависимости от аргумента
 
   var addHandlers = function (flag) {
-    if (flag) {
-      AVATAR_LOADER.addEventListener('change', avatarLoadHandler(AVATAR_LOADER, readerAvatar, userAvatarLoadHandler));
-      PHOTO_APARTMENTS_LOADER.addEventListener('change', avatarLoadHandler(PHOTO_APARTMENTS_LOADER, readerPhotoApartments,
-        photoApartmentsLoadHandler))
+    if (flag === true) {
+      Nodes.AVATAR_LOADER.addEventListener('change', avatarLoadHandler);
+      Nodes.PHOTO_APARTMENTS_LOADER.addEventListener('change', photoAppartmentLoadHandler);
+      return;
     }
-    AVATAR_LOADER.removeEventListener('change', avatarLoadHandler(AVATAR_LOADER, readerAvatar, userAvatarLoadHandler));
-    PHOTO_APARTMENTS_LOADER.removeEventListener('change', avatarLoadHandler(PHOTO_APARTMENTS_LOADER, readerPhotoApartments,
-      photoApartmentsLoadHandler))
+    Nodes.AVATAR_LOADER.removeEventListener('change', avatarLoadHandler);
+    Nodes.PHOTO_APARTMENTS_LOADER.removeEventListener('change', photoAppartmentLoadHandler);
   };
 
   window.prewieInstallImages = {

@@ -4,38 +4,32 @@
 
   var DEBOUNCE_INTERVAL = 500;
 
-  var addHandlers = function (nodes, evt1, evt2, func1, func2) {
-    nodes.addEventListener(evt1, func1);
-    // активация страницы с клавиатуры
-    nodes.addEventListener(evt2, func2);
+  var summarizeRenderPinsPlusAtiveSettings = function () {
+    window.pin.requestData();
+    window.map.startActivePageSettings();
   };
 
-  var mainPinClickHandler = function (evt, func1, func2, MouseKey1, MouseKey2) {
-    if (evt.button === MouseKey1 || evt.button === MouseKey2) {
-      return func1;
+   var MainPinHandlersClass = {
+    evt: ['click', 'keydown'],
+    mainPin: window.nodes.MAIN_PIN,
+
+    mainPinClickHandler: function (evt) {
+      summarizeRenderPinsPlusAtiveSettings();
+    },
+
+    mainPinKeyDownHandler: function (evt) {
+      if (evt.key === 'Enter') {
+        summarizeRenderPinsPlusAtiveSettings();
+      }
     }
-    return func2;
   };
 
-  var mainPinKeyDownHandler = function (evt, func) {
-    if (evt.key === 'Enter') {
-      func();
-    }
+  var addHandlersToMainPin = function (mainPinClass) {
+    mainPinClass.mainPin.addEventListener(mainPinClass.evt[0], mainPinClass.mainPinClickHandler);
+    mainPinClass.mainPin.addEventListener(mainPinClass.evt[1], mainPinClass.mainPinKeyDownHandler);
   };
 
-  var addMainPinHandler = function (fun, MouseKey1, MouseKey2) {
-    return mainPinClickHandler('click', window.nodes.MAIN_PIN.disable, fun, MouseKey1, MouseKey2);
-  };
-
-  var addMainPinKeyHandler = function (func) {
-    return mainPinKeyDownHandler('keydown', func);
-  };
-
-  var mainPinHandlers = function (renderCards) {
-    return addHandlers(window.nodes.MAIN_PIN, 'click', 'keydown',
-      addMainPinHandler(renderCards, window.data.MouseKey.MIDDLE, window.data.MouseKey.RIGHT),
-      addMainPinKeyHandler(renderCards));
-  };
+  var mainPinHandlers = () => addHandlersToMainPin(MainPinHandlersClass);
 
   var debounce = function (cb) {
     var lastTimeout = null;
@@ -50,19 +44,20 @@
     };
   };
 
+
   var windowScrollHandler = function () {
     if (window.scrollY === 500) {
-      var card = document.querySelector('.map__card');
-      card.remove();
+        // проверить после восстановления сервера
+        /* var card = document.querySelector('.map__card');*/
+       var card = window.nodes.MAP.querySelector('.map__card');
+       card.remove();
     }
   };
 
   window.handlers = {
-    addMainPinHandler: addMainPinHandler,
-    addMainPinKeyHandler: addMainPinKeyHandler,
     mainPinHandlers: mainPinHandlers,
     debounce: debounce,
     windowScrollHandler: windowScrollHandler
   };
-}());
 
+}());

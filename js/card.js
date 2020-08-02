@@ -6,10 +6,10 @@
 
   var getButtonCloseHandler = function (element) {
     return function (evt) {
-      window.ACTIVE_PIN = document.querySelector('.map__pin--active');
+      var ACTIVE_PIN = document.querySelector('.map__pin--active');
       if (evt.key === 'Escape' || evt.button === 0) {
         element.remove();
-        window.ACTIVE_PIN.classList.remove('map__pin--active');
+        ACTIVE_PIN.classList.remove('map__pin--active');
         window.pin.COUNTERS.pop();
       }
     };

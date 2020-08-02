@@ -24,31 +24,6 @@
     document.addEventListener('click', errorBlockRemoveHandler2);
   };
 
-  /* var render = function (errorMessage) {
-     return window.nodes.MAIN.appendChild(errorMessage);
-   };
-
-   var Message = function (clone, method) {
-     this.clone = clone;
-     this.method = method;
-   };
-
-   Message.prototype.renderThis = function () {
-     render(this.clone.cloneNode(true));
-   };
-
-   var errorMessage1 = new Message(window.nodes.ERROR_MESSAGE_TEMPLATE, addListeners);
-   var successMessage1 = new Message(window.nodes.SUCCESS_MESSAGE, addListeners2);
-
- //  console.log(errorMessage1.renderThis);
-
-   var setMessage = {
-     getMessage: function () {
-       errorMessage1.renderThis();
-       errorMessage1.method();
-     }
-   }; */
-
   var renderErrorMessage = function () {
     var errorMessage = window.nodes.ERROR_MESSAGE_TEMPLATE.cloneNode(true);
     window.nodes.MAIN.appendChild(errorMessage);

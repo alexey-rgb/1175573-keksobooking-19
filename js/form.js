@@ -78,7 +78,9 @@
 
   var saveData = function () {
     window.backend.postForm(new FormData(window.nodes.FORM),
-      window.message.renderSuccessMessage, window.message.renderErrorMessage, window.backend.Url.POST);
+      window.message.renderSuccessMessage,
+      window.message.renderErrorMessage,
+      window.backend.Url.POST);
   };
 
   var formSubmitHandler = function (evt) {
