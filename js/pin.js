@@ -1,6 +1,9 @@
 "use strict";
 
 (function () {
+  // используем, что бы нарезать нужное количество объявлений, полученных с сервера
+  // в соответствии с тз
+
   var IndexCard = {
     FROM: 0,
     TO: 5,
@@ -8,12 +11,15 @@
 
   var COUNTERS = [];
 
+  // хранит данные с бэкенда
+
   var copyServerResponse = [];
 
   var PIN_POSITION_FORMULA =
     window.data.PIN_PERCENT_SIZE * window.data.NUMBER_FOR_COUNT;
 
-  // позволяет передавать/снимать подсветку(css) активного пина другому пину, в смены активного пина.
+  // позволяет передавать/снимать подсветку(css) активного пина другому пину,
+  // то есть активный пин с оранжевой подсветкой будет всегда один
 
   var toggleActiveClass = function (node, clone) {
     if (COUNTERS.includes("")) {
@@ -23,6 +29,8 @@
     clone.classList.add("map__pin--active");
     COUNTERS.push("");
   };
+
+  // на основе шаблона создаётся будущий пин, с добавлением атрибутов, обработчика и его положения на карте
 
   var preparePin = function (item) {
     var getNewCard = window.card.renderCard(item);
@@ -50,6 +58,8 @@
     return pinElement;
   };
 
+  // собирает будущие пины во фрагмент
+
   var addFuturePinsToFragment = function (items) {
     var fragment1 = document.createDocumentFragment();
     items.forEach(function (item) {
@@ -58,18 +68,15 @@
     return fragment1;
   };
 
+  // рендерит отфильтрованные пользователем пины/метки в дом
+
   var renderFilteredPins = function () {
     window.nodes.MAP.appendChild(
       window.pin.renderPins(window.filter.filterOffers(copyServerResponse))
     );
   };
 
-  /*   var renderPins = function (items, index1, index2) {
-    copyServerResponse = items.slice();
-    window.nodes.MAP.appendChild(window.pin.renderPins(copyServerResponse.slice(index1, index2)));
-  }; */
-
-  /*************************TEST*************************************** */
+  // рендерит пины/метки в дом
 
   var renderPins = function (items, index1, index2) {
     copyServerResponse = items.slice();
@@ -78,7 +85,29 @@
     );
   };
 
-  console.log(window.database.apartsDesc);
+  // запрашивает данные с сервера, передаёт шаблон сообщения об ошибке,
+  // в случае проблем с ответом
+
+  var requestData = function () {
+    var PIN = document.querySelector('button[type="button"]');
+    // проверка необходима, что главная метка не реагировала на повторный клик
+    if (!PIN) {
+      window.backend.loadCards(
+        renderPins,
+        window.message.insertErrorMessage,
+        window.backend.Url.GET
+      );
+    }
+  };
+
+  /*************************Version with fake data(if server down)*************************************** */
+
+  /*   var renderPins = function (items, index1, index2) {
+    copyServerResponse = items.slice();
+    window.nodes.MAP.appendChild(
+      window.pin.renderPins(copyServerResponse.slice(index1, index2))
+    );
+  };
 
   var requestData = function () {
     var PIN = document.querySelector('button[type="button"]');
@@ -87,24 +116,20 @@
     if (!PIN) {
       renderPins(window.database.apartsDesc, IndexCard.FROM, IndexCard.TO); //window.message.insertErrorMessage, window.backend.Url.GET);
     }
-  };
+  }; */
 
   /******************************************************************** */
 
-  /*   var requestData = function () {
-    var PIN = document.querySelector('button[type="button"]');
-    // проверка необходима, что главная метка не реагировала на повторный клик
-    if (!PIN) {
-      window.backend.loadCards(renderPins, window.message.insertErrorMessage, window.backend.Url.GET);
-    }
-  }; */
+  // 1. устанавливает некоторые настройки полям ввода
+  // после активизации страницы, через клик по главной метке
+  // 2. lfyyst
 
-  function addMainPinHandlerSetFieldGuests(dataRequest) {
+  function addMainPinHandlerAndSetFieldGuests() {
     window.form.inputGuestsChangeNumberHandler();
-    window.handlers.mainPinHandlers(dataRequest);
+    window.handlers.mainPinHandlers();
   }
 
-  var loadDataHandler = () => addMainPinHandlerSetFieldGuests(requestData);
+  var loadDataHandler = () => addMainPinHandlerAndSetFieldGuests();
 
   window.pin = {
     renderPins: addFuturePinsToFragment,
