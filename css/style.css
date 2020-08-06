@@ -922,7 +922,7 @@ fieldset {
 }
 
 .contacts {
-  margin: 0;
+  margin: 0  0 0 auto;
   padding: 0;
   list-style: none;
 

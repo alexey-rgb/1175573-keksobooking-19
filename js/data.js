@@ -1,58 +1,60 @@
-'use strict';
+"use strict";
 
 (function () {
   var NUMBER_FOR_COUNT = 0.5;
   var OBJECT_NUMBER = 8;
   var Value = {
     MIN: 1,
-    MAX: 10
+    MAX: 10,
   };
   var Price = {
     MIN: 1000,
-    MAX: 10000
+    MAX: 10000,
   };
   var MaxMapWidth = {
     PIXEL: 1200,
-    PERCENT: 100
+    PERCENT: 100,
   };
   var Pin = {
     PIXEL_SIZE: 50,
-    PSEUDO: 17
+    PSEUDO: 17,
   };
   var MainPin = {
     POSITION_X: 570,
     POSITION_Y: 375,
-    HEIGHT: 65
+    HEIGHT: 65,
   };
-  var CHECKS = ['12:00', '13:00', '14:00'];
-  var TYPES = ['Дворец', 'Квартира', 'Дом', 'Бунгало'];
-  var PHOTO_APARTMENTS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg',
-    'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
-    'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+  var CHECKS = ["12:00", "13:00", "14:00"];
+  var TYPES = ["Дворец", "Квартира", "Дом", "Бунгало"];
+  var PHOTO_APARTMENTS = [
+    "http://o0.github.io/assets/images/tokyo/hotel1.jpg",
+    "http://o0.github.io/assets/images/tokyo/hotel2.jpg",
+    "http://o0.github.io/assets/images/tokyo/hotel3.jpg",
+  ];
 
-  var FEATURES_CLASS_CONSTRUCTION1 = 'popup__feature popup__feature--';
+  var FEATURES_CLASS_CONSTRUCTION1 = "popup__feature popup__feature--";
 
   var ROOM_DATA = {
     palace: {
-      type: 'Дворец',
+      type: "Дворец",
       price: 10000,
-      value: 'palace'
+      value: "palace",
     },
     house: {
-      type: 'Дом',
+      type: "Дом",
       price: 5000,
-      value: 'house'
+      value: "house",
     },
     flat: {
-      type: 'Квартира',
+      type: "Квартира",
       price: 1000,
-      value: 'flat'
+      value: "flat",
     },
     bungalo: {
-      type: 'Бунгало',
+      type: "Бунгало",
       price: 0,
-      value: 'bungalo'
-    }
+      value: "bungalo",
+    },
   };
 
   var Position = {
@@ -62,17 +64,18 @@
 
   var LengthSymbol = {
     MIN: 30,
-    MAX: 100
+    MAX: 100,
   };
 
   var MouseKey = {
     RIGHT: 2,
-    MIDDLE: 1
+    MIDDLE: 1,
   };
 
   var PinPixelSize = 50;
 
-  var PIN_PERCENT_SIZE = (PinPixelSize * MaxMapWidth.PERCENT) / MaxMapWidth.PIXEL;
+  var PIN_PERCENT_SIZE =
+    (PinPixelSize * MaxMapWidth.PERCENT) / MaxMapWidth.PIXEL;
 
   window.data = {
     NUMBER_FOR_COUNT: NUMBER_FOR_COUNT,
@@ -93,4 +96,4 @@
     PIN_PERCENT_SIZE: PIN_PERCENT_SIZE,
     PinPixelSize: PinPixelSize,
   };
-}());
+})();

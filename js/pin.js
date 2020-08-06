@@ -1,29 +1,34 @@
-'use strict';
+"use strict";
 
 (function () {
+  var IndexCard = {
+    FROM: 0,
+    TO: 5,
+  };
 
   var COUNTERS = [];
 
   var copyServerResponse = [];
 
-  var PIN_POSITION_FORMULA = (window.data.PIN_PERCENT_SIZE * window.data.NUMBER_FOR_COUNT);
+  var PIN_POSITION_FORMULA =
+    window.data.PIN_PERCENT_SIZE * window.data.NUMBER_FOR_COUNT;
 
   // позволяет передавать/снимать подсветку(css) активного пина другому пину, в смены активного пина.
 
   var toggleActiveClass = function (node, clone) {
-    if (COUNTERS.includes('')) {
-      node.classList.remove('map__pin--active');
+    if (COUNTERS.includes("")) {
+      node.classList.remove("map__pin--active");
       COUNTERS.pop();
     }
-    clone.classList.add('map__pin--active');
-    COUNTERS.push('');
+    clone.classList.add("map__pin--active");
+    COUNTERS.push("");
   };
 
   var preparePin = function (item) {
     var getNewCard = window.card.renderCard(item);
     var pinClickHandler = function () {
-    var ACTIVE_PIN = document.querySelector('.map__pin--active');
-      var cards = window.nodes.MAP.querySelectorAll('.map__card');
+      var ACTIVE_PIN = document.querySelector(".map__pin--active");
+      var cards = window.nodes.MAP.querySelectorAll(".map__card");
       if (cards.length > 0) {
         cards[0].remove();
       }
@@ -31,13 +36,17 @@
       toggleActiveClass(ACTIVE_PIN, pinElement);
     };
     var pinElement = window.nodes.PIN_TEMPLATE.cloneNode(true);
-    var pinImage = pinElement.querySelector('img');
+    var pinImage = pinElement.querySelector("img");
     pinImage.src = item.author.avatar;
     pinImage.alt = item.offer.title;
-    pinElement.style.left = item.location.x - (window.data.PinPixelSize * window.data.NUMBER_FOR_COUNT) + 'px';
-    pinElement.style.top = 'calc(' + (item.location.y) + 'px + ' + (-PIN_POSITION_FORMULA * 2) + '%)';
-    pinElement.setAttribute('tabindex', '1');
-    pinElement.addEventListener('click', pinClickHandler);
+    pinElement.style.left =
+      item.location.x -
+      window.data.PinPixelSize * window.data.NUMBER_FOR_COUNT +
+      "px";
+    pinElement.style.top =
+      "calc(" + item.location.y + "px + " + -PIN_POSITION_FORMULA * 2 + "%)";
+    pinElement.setAttribute("tabindex", "1");
+    pinElement.addEventListener("click", pinClickHandler);
     return pinElement;
   };
 
@@ -50,22 +59,45 @@
   };
 
   var renderFilteredPins = function () {
-    window.nodes.MAP.appendChild(window.pin.renderPins(window.filter.filterOffers(copyServerResponse)));
+    window.nodes.MAP.appendChild(
+      window.pin.renderPins(window.filter.filterOffers(copyServerResponse))
+    );
   };
+
+  /*   var renderPins = function (items, index1, index2) {
+    copyServerResponse = items.slice();
+    window.nodes.MAP.appendChild(window.pin.renderPins(copyServerResponse.slice(index1, index2)));
+  }; */
+
+  /*************************TEST*************************************** */
 
   var renderPins = function (items, index1, index2) {
     copyServerResponse = items.slice();
-    window.nodes.MAP.appendChild(window.pin.renderPins(copyServerResponse.slice(index1, index2)));
+    window.nodes.MAP.appendChild(
+      window.pin.renderPins(copyServerResponse.slice(index1, index2))
+    );
   };
 
+  console.log(window.database.apartsDesc);
 
-   var requestData = function () {
+  var requestData = function () {
+    var PIN = document.querySelector('button[type="button"]');
+    // проверка необходима, что главная метка не реагировала на повторный клик
+
+    if (!PIN) {
+      renderPins(window.database.apartsDesc, IndexCard.FROM, IndexCard.TO); //window.message.insertErrorMessage, window.backend.Url.GET);
+    }
+  };
+
+  /******************************************************************** */
+
+  /*   var requestData = function () {
     var PIN = document.querySelector('button[type="button"]');
     // проверка необходима, что главная метка не реагировала на повторный клик
     if (!PIN) {
       window.backend.loadCards(renderPins, window.message.insertErrorMessage, window.backend.Url.GET);
     }
-  };
+  }; */
 
   function addMainPinHandlerSetFieldGuests(dataRequest) {
     window.form.inputGuestsChangeNumberHandler();
@@ -75,10 +107,10 @@
   var loadDataHandler = () => addMainPinHandlerSetFieldGuests(requestData);
 
   window.pin = {
-    renderPins:  addFuturePinsToFragment,
+    renderPins: addFuturePinsToFragment,
     COUNTERS: COUNTERS,
     renderFilteredPins: renderFilteredPins,
     loadDataHandler: loadDataHandler,
-    requestData: requestData
+    requestData: requestData,
   };
-}());
+})();
